@@ -30,7 +30,7 @@ jobs:
         run: |
           rustup update
           cargo install trunk
-          apt install libasound2-dev libudev-dev pkg-config
+          sudo apt install libasound2-dev libudev-dev pkg-config
 
   clippy:
     needs: setup
