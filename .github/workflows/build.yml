@@ -48,7 +48,7 @@ jobs:
       # Enforce Clippy lints, deny warnings
       - name: Clippy
         run: |
-          apt install libasound2-dev libudev-dev pkg-config
+          sudo apt install libasound2-dev libudev-dev pkg-config
           cargo clippy -- -D warnings
 
   build:
