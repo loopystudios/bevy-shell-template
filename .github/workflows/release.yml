@@ -18,25 +18,33 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Cargo cache
-      - name: Cargo cache
-        id: cache-cargo
+      # Cache build environment
+      - name: Check setup tools
+        id: cache-setup
         uses: actions/cache@v3
         with:
-          path: ~/.cargo/bin
-          key: cargo
+          path: |
+            ~/.cargo
+          key: setup
 
       # Install cargo deps
       - name: Pull Cargo dependencies
-        if: steps.cache-cargo.outputs.cache-hit != 'true'
+        if: steps.cache-setup.outputs.cache-hit != 'true'
         run: |
           rustup update
           cargo install trunk
 
-  build:
+  build-wasm:
     needs: setup
     runs-on: ubuntu-latest
     steps:
+      - name: Pull setup tools
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo
+          key: setup
+
       # Check cache for existing revision of build
       - name: Build cache
         id: cache-build
@@ -45,16 +53,28 @@ jobs:
           path: ./dist
           key: release-${{ env.VERSION }}
 
+      # Checkout code
+      - name: Checkout code
+        if: steps.cache-build.outputs.cache-hit != 'true'
+        uses: actions/checkout@v3
+
       # Build release version
       - name: Build
         if: steps.cache-build.outputs.cache-hit != 'true'
         run: |
           trunk build --release --public-url ${{ PUBLIC_URL }}
 
-  release-pages:
-    needs: build
+  release-wasm:
+    needs: build-wasm
     runs-on: ubuntu-latest
     steps:
+      - name: Pull release cache
+        id: cache-build
+        uses: actions/cache@v3
+        with:
+          path: ./dist
+          key: release-${{ env.VERSION }}
+
       # Deploy, GitHub Pages
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
@@ -63,9 +83,16 @@ jobs:
           publish_dir: ./dist
 
   release-docker-server:
-    needs: build
+    needs: build-wasm
     runs-on: ubuntu-latest
     steps:
+      - name: Pull release cache
+        id: cache-build
+        uses: actions/cache@v3
+        with:
+          path: ./dist
+          key: release-${{ env.VERSION }}
+
       # Qemu is an emulator for alternative architectures
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
