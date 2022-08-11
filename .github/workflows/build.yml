@@ -22,7 +22,7 @@ jobs:
           path: |
             ~/.cargo
             /usr/sbin/
-          key: cargo
+          key: setup
 
       # Install cargo deps
       - name: Pull Cargo dependencies
@@ -37,13 +37,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Pull setup tools
-        id: cache-setup
         uses: actions/cache@v3
         with:
           path: |
             ~/.cargo
             /usr/sbin/
-          key: cargo
+          key: setup
 
       # Checkout code
       - name: Checkout code
@@ -59,13 +58,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Pull setup tools
-        id: cache-setup
         uses: actions/cache@v3
         with:
           path: |
             ~/.cargo
             /usr/sbin/
-          key: cargo
+          key: setup
 
       # Check cache for existing revision of build
       - name: Build cache
