@@ -17,24 +17,25 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Uses `rust-toolchain.toml` for settings
-      - name: Install toolchain
-        uses: actions-rs/toolchain@v1
-
-      # Trunk distributes WASM builds easier - https://trunkrs.dev
-      - name: Install Trunk
-        uses: jetli/trunk-action@v0.1.0
+      # Cargo cache
+      - name: Cargo cache
+        id: cache-cargo
+        uses: actions/cache@v3
         with:
-          version: "latest"
+          path: ~/.cargo/bin
+          key: cargo
+
+      # Install cargo deps
+      - name: Pull Cargo dependencies
+        if: steps.cache-cargo.outputs.cache-hit != 'true'
+        run: |
+          rustup update
+          cargo install trunk
 
   build:
     needs: setup
     runs-on: ubuntu-latest
     steps:
-      # Checkout code
-      - name: Checkout code
-        uses: actions/checkout@v3
-
       # Check cache for existing revision of build
       - name: Build cache
         id: cache-build
