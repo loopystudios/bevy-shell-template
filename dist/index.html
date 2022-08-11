@@ -1,0 +1,133 @@
+<!DOCTYPE html><html lang="en-US"><head>
+    <!-- Title -->
+    <title>Bevy Shell - Template</title>
+
+    <!-- Meta -->
+    <meta charset="utf-8">
+    <meta content="ie=edge" http-equiv="x-ua-compatible">
+    <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
+    <meta name="robots" content="index, follow">
+    <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+    <meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+    <meta name="description" content="The description for a game.">
+    <meta name="keywords" content="bevy, shell, template, keywords">
+
+    <!-- Copyright -->
+    <meta name="author" content="Your Name">
+    <meta name="copyright" content="Your Name">
+
+    <!-- OpenGraph -->
+    <meta property="og:site_name" content="Your Name">
+    <meta property="og:title" content="Your Name">
+    <meta property="og:description" content="A description for OpenGraph embedding.">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:type" content="game">
+    <meta property="og:url" content="https://kurbos.github.io/bevy-shell-template">
+    <meta property="og:image" content="/static/banner.png">
+
+    <!-- Twitter -->
+    <meta name="twitter:title" content="Bevy Shell - Template">
+    <meta name="twitter:description" content="A description for Twitter embedding.">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="/static/banner.png">
+    <meta name="twitter:site" content="@your-twitter">
+    <meta name="twitter:creator" content="@your-twitter">
+
+    <!-- Mobile -->
+    <meta name="HandheldFriendly" content="True">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="theme-color" content="#fafafa">
+    <meta name="msapplication-TileColor" content="#fafafa">
+
+    <!-- Mobile Links -->
+    <link rel="manifest" href="/static/site.webmanifest">
+    <link rel="mask-icon" href="/static/safari-pinned-tab.svg" color="#0099FF">
+    <link rel="apple-touch-icon" href="/static/apple-touch-icon.png" sizes="180x180">
+    <link rel="icon" href="/static/favicon-32x32.png" sizes="32x32" type="image/png">
+    <link rel="icon" href="/static/favicon-16x16.png" sizes="16x16" type="image/png">
+
+    <!-- Links -->
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+    <link rel="canonical" href="https://kurbos.github.io/bevy-shell-template">
+    <link rel="sitemap" type="application/xml" href="/sitemap.xml">
+
+    <!-- Trunk Directives -->
+    
+    
+    
+    <script type="module">import init from '/my-game-a0f9dfaed0413d3.js';init('/my-game-a0f9dfaed0413d3_bg.wasm');</script>
+
+<link rel="preload" href="/my-game-a0f9dfaed0413d3_bg.wasm" as="fetch" type="application/wasm" crossorigin="">
+<link rel="modulepreload" href="/my-game-a0f9dfaed0413d3.js"></head>
+
+<body>
+    <!-- The following is a loading modal which displays when waiting for WASM load. -->
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --fg: rgb(204, 204, 204);
+                --bg: rgb(34, 34, 34);
+            }
+        }
+
+        @media (prefers-color-scheme: light) {
+            :root {
+                --fg: rgb(68, 68, 68);
+                --bg: rgb(255, 255, 255);
+            }
+        }
+
+        svg {
+            width: 100px;
+            height: 100px;
+        }
+
+        body {
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            min-height: 100vh;
+            background: var(--bg);
+            color: var(--fg);
+        }
+    </style>
+    <svg version=" 1.1" id="L3" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 100 100" enable-background="new 0 0 0 0" xml:space="preserve">
+        <circle fill="none" stroke="var(--fg)" stroke-width="4" cx="50" cy="50" r="44" style="opacity:0.5;"></circle>
+        <circle fill="var(--bg)" stroke="var(--fg)" stroke-width="3" cx="8" cy="54" r="6">
+            <animateTransform attributeName="transform" dur="2s" type="rotate" from="0 50 48" to="360 50 52" repeatCount="indefinite"></animateTransform>
+        </circle>
+    </svg>
+
+
+<script>(function () {
+    var protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    var url = protocol + '//' + window.location.host + '/_trunk/ws';
+    var poll_interval = 5000;
+    var reload_upon_connect = () => {
+        window.setTimeout(
+            () => {
+                // when we successfully reconnect, we'll force a
+                // reload (since we presumably lost connection to
+                // trunk due to it being killed, so it will have
+                // rebuilt on restart)
+                var ws = new WebSocket(url);
+                ws.onopen = () => window.location.reload();
+                ws.onclose = reload_upon_connect;
+            },
+            poll_interval);
+    };
+
+    var ws = new WebSocket(url);
+    ws.onmessage = (ev) => {
+        const msg = JSON.parse(ev.data);
+        if (msg.reload) {
+            window.location.reload();
+        }
+    };
+    ws.onclose = reload_upon_connect;
+})()
+</script></body></html>
