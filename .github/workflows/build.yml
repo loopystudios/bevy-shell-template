@@ -6,9 +6,6 @@ on:
   pull_request:
     branches: [main]
 
-env:
-  TOOLCHAIN: stable
-
 jobs:
   setup:
     runs-on: ubuntu-latest
@@ -22,7 +19,7 @@ jobs:
         id: cache-cargo
         uses: actions/cache@v3
         with:
-          path: ~/.cargo/bin
+          path: ~/.cargo
           key: cargo
 
       # Install cargo deps
@@ -32,10 +29,36 @@ jobs:
           rustup update
           cargo install trunk
 
+  clippy:
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      # Pull Cargo
+      - name: Cargo cache
+        id: cache-cargo
+        uses: actions/cache@v3
+        with:
+          path: ~/.cargo
+          key: cargo
+
+      # Build release version
+      - name: Build
+        if: steps.cache-build.outputs.cache-hit != 'true'
+        run: |
+          cargo clippy -- -D warnings
+
   build:
     needs: setup
     runs-on: ubuntu-latest
     steps:
+      # Pull Cargo
+      - name: Cargo cache
+        id: cache-cargo
+        uses: actions/cache@v3
+        with:
+          path: ~/.cargo
+          key: cargo
+
       # Check cache for existing revision of build
       - name: Build cache
         id: cache-build
