@@ -21,7 +21,6 @@ jobs:
         with:
           path: |
             ~/.cargo
-            /usr/sbin/
           key: setup
 
       # Install cargo deps
@@ -30,7 +29,6 @@ jobs:
         run: |
           rustup update
           cargo install trunk
-          sudo apt install libasound2-dev libudev-dev pkg-config
 
   clippy:
     needs: setup
@@ -41,7 +39,6 @@ jobs:
         with:
           path: |
             ~/.cargo
-            /usr/sbin/
           key: setup
 
       # Checkout code
@@ -49,8 +46,9 @@ jobs:
         uses: actions/checkout@v3
 
       # Enforce Clippy lints, deny warnings
-      - name: Build
+      - name: Clippy
         run: |
+          apt install libasound2-dev libudev-dev pkg-config
           cargo clippy -- -D warnings
 
   build:
@@ -62,7 +60,6 @@ jobs:
         with:
           path: |
             ~/.cargo
-            /usr/sbin/
           key: setup
 
       # Check cache for existing revision of build
