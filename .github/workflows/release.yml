@@ -207,5 +207,4 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.RELEASE_NAME }}:${{ needs.setup.outputs.version }}
             ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.RELEASE_NAME }}:latest
