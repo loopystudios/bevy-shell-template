@@ -14,8 +14,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Enforce Clippy lints, deny warnings
-      - name: Clippy
+      # Install dependencies
+      - name: Install dependencies
         run: |
           sudo apt install libasound2-dev libudev-dev pkg-config
-          cargo clippy --workspace -- -D warnings
+
+      # Enforce Clippy lints, deny warnings
+      - name: Clippy
+        run: cargo clippy --workspace -- -D warnings
