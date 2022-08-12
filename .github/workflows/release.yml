@@ -6,7 +6,7 @@ on:
       - "v*.*.*"
 
 env:
-  DOCKER_IMG_NAME: my-game
+  RELEASE_NAME: my-game
 
 jobs:
   build-windows:
@@ -100,14 +100,14 @@ jobs:
           key: release-windows-${{ env.VERSION }}
       - name: Rename build
         run: |
-          mv ./target/release/my-game ./windows-latest.exe
+          mv ./target/release/native-launcher.exe ./my-game.exe
       - name: Upload
         uses: softprops/action-gh-release@v1
         with:
           draft: false
           prerelease: false
           fail_on_unmatched_files: true
-          files: ./windows-latest.exe
+          files: ./my-game.exe
 
   release-mac:
     needs: build-mac
@@ -120,14 +120,14 @@ jobs:
           key: release-mac-${{ env.VERSION }}
       - name: Rename build
         run: |
-          mv ./target/release/my-game ./mac-latest
+          mv ./target/release/native-launcher ./${{ env.RELEASE_NAME }}.darwin
       - name: Upload
         uses: softprops/action-gh-release@v1
         with:
           draft: false
           prerelease: false
           fail_on_unmatched_files: true
-          files: ./mac-latest
+          files: ./${{ env.RELEASE_NAME }}.darwin
 
   release-ubuntu:
     needs: build-ubuntu
@@ -140,14 +140,14 @@ jobs:
           key: release-ubuntu-${{ env.VERSION }}
       - name: Rename build
         run: |
-          mv ./target/release/my-game ./ubuntu-latest
+          mv ./target/release/native-launcher ./${{ env.RELEASE_NAME }}.linux
       - name: Upload
         uses: softprops/action-gh-release@v1
         with:
           draft: false
           prerelease: false
           fail_on_unmatched_files: true
-          files: ./ubuntu-latest
+          files: ./${{ env.RELEASE_NAME }}.linux
 
   release-github-pages:
     needs: build-wasm
@@ -197,5 +197,5 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_IMG_NAME }}:${{ steps.get_version.outputs.VERSION }}
-            ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_IMG_NAME }}:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.RELEASE_NAME }}:${{ steps.get_version.outputs.VERSION }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.RELEASE_NAME }}:latest
