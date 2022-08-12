@@ -6,92 +6,173 @@ on:
       - "v*.*.*"
 
 env:
-  PUBLIC_URL: /bevy-shell-template/
   DOCKER_IMG_NAME: my-game
 
 jobs:
-  setup:
-    runs-on: ubuntu-latest
+  build-windows:
+    runs-on: windows-latest
     steps:
-      # Checkout code
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      # Cache build environment
-      - name: Check setup tools
-        id: cache-setup
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.cargo
-          key: setup
-
-      # Install cargo deps
-      - name: Pull Cargo dependencies
-        if: steps.cache-setup.outputs.cache-hit != 'true'
-        run: |
-          rustup update
-          cargo install trunk
-
-  build-wasm:
-    needs: setup
-    runs-on: ubuntu-latest
-    steps:
-      - name: Pull setup tools
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.cargo
-          key: setup
-
-      # Check cache for existing revision of build
-      - name: Build cache
+      - name: Pull build cache
         id: cache-build
         uses: actions/cache@v3
         with:
-          path: ./dist
-          key: release-${{ env.VERSION }}
-
-      # Checkout code
+          path: ./target
+          key: release-windows-${{ env.VERSION }}
       - name: Checkout code
         if: steps.cache-build.outputs.cache-hit != 'true'
         uses: actions/checkout@v3
-
-      # Build release version
       - name: Build
         if: steps.cache-build.outputs.cache-hit != 'true'
         run: |
-          trunk build --release --public-url ${{ env.PUBLIC_URL }}
+          cd ./launchers/native
+          cargo build --release
 
-  release-wasm:
-    needs: build-wasm
-    runs-on: ubuntu-latest
+  build-mac:
+    runs-on: macos-latest
     steps:
-      - name: Pull release cache
+      - name: Pull build cache
         id: cache-build
         uses: actions/cache@v3
         with:
-          path: ./dist
-          key: release-${{ env.VERSION }}
+          path: ./target
+          key: release-mac-${{ env.VERSION }}
+      - name: Checkout code
+        if: steps.cache-build.outputs.cache-hit != 'true'
+        uses: actions/checkout@v3
+      - name: Build
+        if: steps.cache-build.outputs.cache-hit != 'true'
+        run: |
+          cd ./launchers/native
+          cargo build --release
 
-      # Deploy, GitHub Pages
-      - name: Deploy
+  build-ubuntu:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pull build cache
+        id: cache-build
+        uses: actions/cache@v3
+        with:
+          path: ./target
+          key: release-ubuntu-${{ env.VERSION }}
+      - name: Checkout code
+        if: steps.cache-build.outputs.cache-hit != 'true'
+        uses: actions/checkout@v3
+      - name: Get dependencies
+        if: steps.cache-build.outputs.cache-hit != 'true'
+        run: sudo apt install libasound2-dev libudev-dev pkg-config
+      - name: Build
+        if: steps.cache-build.outputs.cache-hit != 'true'
+        run: |
+          cd ./launchers/native
+          cargo build --release
+
+  build-wasm:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pull build cache
+        id: cache-build
+        uses: actions/cache@v3
+        with:
+          path: ./launchers/wasm/dist
+          key: release-wasm-${{ env.VERSION }}
+      - name: Checkout code
+        if: steps.cache-build.outputs.cache-hit != 'true'
+        uses: actions/checkout@v3
+      - name: Install Trunk
+        if: steps.cache-build.outputs.cache-hit != 'true'
+        uses: jetli/trunk-action@v0.1.0
+        with:
+          version: "latest"
+      - name: Trunk Build
+        if: steps.cache-build.outputs.cache-hit != 'true'
+        run: |
+          cd ./launchers/wasm
+          trunk build
+
+  release-windows:
+    needs: build-windows
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pull cache
+        uses: actions/cache@v3
+        with:
+          path: ./target
+          key: release-windows-${{ env.VERSION }}
+      - name: Rename build
+        run: |
+          mv ./target/release/my-game ./windows-latest.exe
+      - name: Upload
+        uses: softprops/action-gh-release@v1
+        with:
+          draft: false
+          prerelease: false
+          fail_on_unmatched_files: true
+          files: ./windows-latest.exe
+
+  release-mac:
+    needs: build-mac
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pull cache
+        uses: actions/cache@v3
+        with:
+          path: ./target
+          key: release-mac-${{ env.VERSION }}
+      - name: Rename build
+        run: |
+          mv ./target/release/my-game ./mac-latest
+      - name: Upload
+        uses: softprops/action-gh-release@v1
+        with:
+          draft: false
+          prerelease: false
+          fail_on_unmatched_files: true
+          files: ./mac-latest
+
+  release-ubuntu:
+    needs: build-ubuntu
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pull cache
+        uses: actions/cache@v3
+        with:
+          path: ./target
+          key: release-ubuntu-${{ env.VERSION }}
+      - name: Rename build
+        run: |
+          mv ./target/release/my-game ./ubuntu-latest
+      - name: Upload
+        uses: softprops/action-gh-release@v1
+        with:
+          draft: false
+          prerelease: false
+          fail_on_unmatched_files: true
+          files: ./ubuntu-latest
+
+  release-wasm-github-pages:
+    needs: build-wasm
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pull cache
+        uses: actions/cache@v3
+        with:
+          path: ./launchers/wasm/dist
+          key: release-wasm-${{ env.VERSION }}
+      - name: Deploy, Github Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
+          publish_dir: ./launchers/wasm/dist
 
-  release-docker-server:
+  release-wasm-docker:
     needs: build-wasm
     runs-on: ubuntu-latest
     steps:
-      - name: Pull release cache
-        id: cache-build
+      - name: Pull cache
         uses: actions/cache@v3
         with:
-          path: ./dist
-          key: release-${{ env.VERSION }}
-
+          path: ./launchers/wasm/dist
+          key: release-wasm-${{ env.VERSION }}
       # Qemu is an emulator for alternative architectures
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
@@ -104,6 +185,7 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+      # Extract the version from the tag
       - name: Get the version
         id: get_version
         run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
@@ -111,7 +193,7 @@ jobs:
       - name: Push to DockerHub
         uses: docker/build-push-action@v3
         with:
-          context: .
+          context: ./launchers/wasm/.
           platforms: linux/amd64,linux/arm64
           push: true
           tags: |
