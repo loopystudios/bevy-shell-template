@@ -6,7 +6,7 @@ on:
       - "v*.*.*"
 
 env:
-  RELEASE_NAME: my-game
+  RELEASE_NAME: my_game
 
 jobs:
   setup:
