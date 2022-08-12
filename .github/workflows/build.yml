@@ -49,9 +49,47 @@ jobs:
       - name: Clippy
         run: |
           sudo apt install libasound2-dev libudev-dev pkg-config
-          cargo clippy -- -D warnings
+          cargo clippy -- --workspace -D warnings
 
-  build:
+  build-native:
+    needs: setup
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        target:
+          [
+            "x86_64-unknown-linux-gnu",
+            "x86_64-apple-darwin",
+            "x86_64-pc-windows-gnu",
+          ]
+    steps:
+      - name: Pull setup tools
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo
+          key: setup
+
+      # Check cache for existing revision of build
+      - name: Build cache
+        id: cache-build
+        uses: actions/cache@v3
+        with:
+          path: ./target
+          key: ${{ matrix.target }}-${{ hashFiles('Cargo.lock') }}-${{ hashFiles('./src') }}-${{ hashFiles('./launchers') }}
+
+      # Checkout code
+      - name: Checkout code
+        if: steps.cache-build.outputs.cache-hit != 'true'
+        uses: actions/checkout@v3
+
+      # Build release version
+      - name: Build
+        if: steps.cache-build.outputs.cache-hit != 'true'
+        run: |
+          cargo build --workspace --target ${{ matrix.target }}
+
+  build-wasm:
     needs: setup
     runs-on: ubuntu-latest
     steps:
@@ -67,8 +105,8 @@ jobs:
         id: cache-build
         uses: actions/cache@v3
         with:
-          path: ./dist
-          key: build-${{ hashFiles('./src') }}-${{ hashFiles('Cargo.lock') }}-${{ hashFiles('./index.html') }}
+          path: ./launchers/wasm/dist
+          key: wasm32-unknown-unknown-${{ hashFiles('Cargo.lock') }}-${{ hashFiles('./src') }}-${{ hashFiles('./launchers') }}
 
       # Checkout code
       - name: Checkout code
