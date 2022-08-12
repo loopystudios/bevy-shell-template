@@ -1,0 +1,24 @@
+name: clippy
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  clippy:
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Install dependencies
+      - name: Install dependencies
+        run: |
+          sudo apt install libasound2-dev libudev-dev pkg-config
+
+      # Enforce Clippy lints, deny warnings
+      - name: Clippy
+        run: cargo clippy --workspace -- -D warnings

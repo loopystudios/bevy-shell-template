@@ -1,0 +1,12 @@
+[package]
+name = "native-launcher"
+version = "0.1.0"
+edition = "2021"
+workspace = "../.."
+
+[dependencies]
+my-game = { package = "my-game", path = "../.." }
+
+# Logging
+log = "0.4.17"
+pretty_env_logger = "0.4" # Native

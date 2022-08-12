@@ -1,0 +1,9 @@
+[toolchain]
+channel = "stable"
+targets = [
+    "wasm32-unknown-unknown",
+    "x86_64-unknown-linux-gnu",
+    "x86_64-apple-darwin",
+    "x86_64-pc-windows-gnu"
+]
+profile = "minimal"

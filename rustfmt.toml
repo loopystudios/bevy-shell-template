@@ -1,0 +1,4 @@
+# Wrap all comments and lines to 80 characters
+max_width = 80
+comment_width = 80
+wrap_comments = true
