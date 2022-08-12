@@ -7,91 +7,18 @@ on:
     branches: [main]
 
 jobs:
-  setup:
-    runs-on: ubuntu-latest
-    steps:
-      # Checkout code
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      # Cache build environment
-      - name: Check setup tools
-        id: cache-setup
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.cargo
-          key: setup
-
-      # Install cargo deps
-      - name: Pull Cargo dependencies
-        if: steps.cache-setup.outputs.cache-hit != 'true'
-        run: |
-          rustup update
-          cargo install trunk
-
-  clippy:
-    needs: setup
-    runs-on: ubuntu-latest
-    steps:
-      - name: Pull setup tools
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.cargo
-          key: setup
-
-      # Checkout code
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      # Enforce Clippy lints, deny warnings
-      - name: Clippy
-        run: |
-          sudo apt install libasound2-dev libudev-dev pkg-config
-          cargo clippy --workspace -- -D warnings
-
-  test:
-    needs: setup
-    runs-on: ubuntu-latest
-    steps:
-      - name: Pull setup tools
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.cargo
-          key: setup
-
-      # Checkout code
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      # Execute unit tests
-      - name: Test
-        run: |
-          sudo apt install libasound2-dev libudev-dev pkg-config
-          cargo test --workspace
-
   build-native:
-    needs: setup
     strategy:
       matrix:
         os: ["ubuntu-latest", "windows-latest", "macOS-latest"]
     runs-on: ${{ matrix.os }}
     steps:
-      - name: Pull setup tools
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.cargo
-          key: setup
-
       - name: Pull build cache
         id: cache-build
         uses: actions/cache@v3
         with:
           path: ./target
-          key: ${{ RUNNER_OS }}-${{ hashFiles('Cargo.lock') }}-${{ hashFiles('./src') }}-${{ hashFiles('./launchers') }}
+          key: ${{ matrix.os }}-${{ hashFiles('Cargo.lock') }}-${{ hashFiles('./src') }}-${{ hashFiles('./launchers') }}
 
       - name: Checkout code
         if: steps.cache-build.outputs.cache-hit != 'true'
@@ -100,7 +27,7 @@ jobs:
       - name: Get Linux dependencies
         if: |
           steps.cache-build.outputs.cache-hit != 'true' &&
-          RUNNER_OS == 'Linux'
+          matrix.os == 'ubuntu-latest'
         run: |
           sudo apt install libasound2-dev libudev-dev pkg-config
 
@@ -111,28 +38,25 @@ jobs:
           cargo build --workspace
 
   build-wasm:
-    needs: setup
     runs-on: ubuntu-latest
     steps:
-      - name: Pull setup tools
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.cargo
-          key: setup
-
       - name: Pull build cache
         id: cache-build
         uses: actions/cache@v3
         with:
-          path: ./target
+          path: ./launchers/wasm/dist
           key: WASM-${{ hashFiles('Cargo.lock') }}-${{ hashFiles('./src') }}-${{ hashFiles('./launchers') }}
 
       - name: Checkout code
         if: steps.cache-build.outputs.cache-hit != 'true'
         uses: actions/checkout@v3
 
-      - name: Build
+      - name: Install Trunk
         if: steps.cache-build.outputs.cache-hit != 'true'
-        run: |
-          trunk build
+        uses: jetli/trunk-action@v0.1.0
+        with:
+          version: "latest"
+
+      - name: Trunk Build
+        if: steps.cache-build.outputs.cache-hit != 'true'
+        run: trunk build
