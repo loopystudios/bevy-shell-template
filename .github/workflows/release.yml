@@ -104,6 +104,9 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Get the version
+        id: get_version
+        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
       # Push HTTP server Docker image
       - name: Push to DockerHub
         uses: docker/build-push-action@v3
@@ -112,5 +115,5 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_IMG_NAME }}:${GITHUB_REF#refs/*/}
+            ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_IMG_NAME }}:${{ steps.get_version.outputs.VERSION }}
             ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_IMG_NAME }}:latest
