@@ -104,11 +104,15 @@ jobs:
         if: steps.cache-build.outputs.cache-hit != 'true'
         uses: actions/checkout@v3
       - name: Build native
-        if: steps.cache-build.outputs.cache-hit != 'true' and matrix.target != "wasm32-unknown-unknown"
+        if: |
+          steps.cache-build.outputs.cache-hit != 'true' &&
+          matrix.target != "wasm32-unknown-unknown"
         run: |
           sudo apt install libasound2-dev libudev-dev pkg-config
           cargo build --workspace --target ${{ matrix.target }}
       - name: Build web assembly
-        if: steps.cache-build.outputs.cache-hit != 'true' and matrix.target == "wasm32-unknown-unknown"
+        if: |
+          steps.cache-build.outputs.cache-hit != 'true' &&
+          matrix.target == "wasm32-unknown-unknown"
         run: |
           trunk build
