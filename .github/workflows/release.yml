@@ -19,100 +19,17 @@ jobs:
         id: version-tag
         run: echo "::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}"
 
-  build-windows:
+  release-windows:
     needs: setup
     runs-on: windows-latest
     steps:
-      - name: Pull build cache
-        id: cache-build
-        uses: actions/cache@v3
-        with:
-          path: ./target
-          key: release-windows-${{ needs.setup.outputs.version }}
       - name: Checkout code
-        if: steps.cache-build.outputs.cache-hit != 'true'
         uses: actions/checkout@v3
       - name: Build
-        if: steps.cache-build.outputs.cache-hit != 'true'
         run: |
           cd ./launchers/native
           cargo build --release
-
-  build-mac:
-    needs: setup
-    runs-on: macos-latest
-    steps:
-      - name: Pull build cache
-        id: cache-build
-        uses: actions/cache@v3
-        with:
-          path: ./target
-          key: release-mac-${{ needs.setup.outputs.version }}
-      - name: Checkout code
-        if: steps.cache-build.outputs.cache-hit != 'true'
-        uses: actions/checkout@v3
-      - name: Build
-        if: steps.cache-build.outputs.cache-hit != 'true'
-        run: |
-          cd ./launchers/native
-          cargo build --release
-
-  build-ubuntu:
-    needs: setup
-    runs-on: ubuntu-latest
-    steps:
-      - name: Pull build cache
-        id: cache-build
-        uses: actions/cache@v3
-        with:
-          path: ./target
-          key: release-ubuntu-${{ needs.setup.outputs.version }}
-      - name: Checkout code
-        if: steps.cache-build.outputs.cache-hit != 'true'
-        uses: actions/checkout@v3
-      - name: Get dependencies
-        if: steps.cache-build.outputs.cache-hit != 'true'
-        run: sudo apt install libasound2-dev libudev-dev pkg-config
-      - name: Build
-        if: steps.cache-build.outputs.cache-hit != 'true'
-        run: |
-          cd ./launchers/native
-          cargo build --release
-
-  build-wasm:
-    needs: setup
-    runs-on: ubuntu-latest
-    steps:
-      - name: Pull build cache
-        id: cache-build
-        uses: actions/cache@v3
-        with:
-          path: ./launchers/wasm/
-          key: release-wasm-${{ needs.setup.outputs.version }}
-      - name: Checkout code
-        if: steps.cache-build.outputs.cache-hit != 'true'
-        uses: actions/checkout@v3
-      - name: Install Trunk
-        if: steps.cache-build.outputs.cache-hit != 'true'
-        uses: jetli/trunk-action@v0.1.0
-        with:
-          version: "latest"
-      - name: Trunk Build
-        if: steps.cache-build.outputs.cache-hit != 'true'
-        run: |
-          cd ./launchers/wasm
-          trunk build --public-url ${{ env.PUBLIC_URL }}
-
-  release-windows:
-    needs: build-windows
-    runs-on: ubuntu-latest
-    steps:
-      - name: Pull cache
-        uses: actions/cache@v3
-        with:
-          path: ./target
-          key: release-windows-${{ needs.setup.outputs.version }}
-      - name: Rename build
+      - name: Rename
         run: |
           mv ./target/release/native-launcher.exe ./${{ env.RELEASE_NAME }}-${{ needs.setup.outputs.version }}.windows.exe
       - name: Upload
@@ -124,15 +41,16 @@ jobs:
           files: ./${{ env.RELEASE_NAME }}-${{ needs.setup.outputs.version }}.windows.exe
 
   release-mac:
-    needs: build-mac
-    runs-on: ubuntu-latest
+    needs: setup
+    runs-on: macos-latest
     steps:
-      - name: Pull cache
-        uses: actions/cache@v3
-        with:
-          path: ./target
-          key: release-mac-${{ needs.setup.outputs.version }}
-      - name: Rename build
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Build
+        run: |
+          cd ./launchers/native
+          cargo build --release
+      - name: Rename
         run: |
           mv ./target/release/native-launcher ./${{ env.RELEASE_NAME }}-${{ needs.setup.outputs.version }}.darwin
       - name: Upload
@@ -144,15 +62,20 @@ jobs:
           files: ./${{ env.RELEASE_NAME }}-${{ needs.setup.outputs.version }}.darwin
 
   release-ubuntu:
-    needs: build-ubuntu
+    needs: setup
     runs-on: ubuntu-latest
     steps:
-      - name: Pull cache
-        uses: actions/cache@v3
-        with:
-          path: ./target
-          key: release-ubuntu-${{ needs.setup.outputs.version }}
-      - name: Rename build
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Get dependencies
+        if: steps.cache-build.outputs.cache-hit != 'true'
+        run: |
+          sudo apt install libasound2-dev libudev-dev pkg-config
+      - name: Build
+        run: |
+          cd ./launchers/native
+          cargo build --release
+      - name: Rename
         run: |
           mv ./target/release/native-launcher ./${{ env.RELEASE_NAME }}-${{ needs.setup.outputs.version }}.linux
       - name: Upload
@@ -163,30 +86,27 @@ jobs:
           fail_on_unmatched_files: true
           files: ./${{ env.RELEASE_NAME }}-${{ needs.setup.outputs.version }}.linux
 
-  release-github-pages:
-    needs: build-wasm
+  release-wasm:
+    needs: setup
     runs-on: ubuntu-latest
     steps:
-      - name: Pull cache
-        uses: actions/cache@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Install Trunk
+        uses: jetli/trunk-action@v0.1.0
         with:
-          path: ./launchers/wasm/
-          key: release-wasm-${{ needs.setup.outputs.version }}
+          version: "latest"
+      - name: Trunk Build
+        run: |
+          cd ./launchers/wasm
+          trunk build --public-url ${{ env.PUBLIC_URL }}
+      ## Deploy - GitHub Pages
       - name: Deploy, Github Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./launchers/wasm/dist/
-
-  release-docker-server:
-    needs: build-wasm
-    runs-on: ubuntu-latest
-    steps:
-      - name: Pull cache
-        uses: actions/cache@v3
-        with:
-          path: ./launchers/wasm/
-          key: release-wasm-${{ needs.setup.outputs.version }}
+      ## Deploy - Docker Server
       # Qemu is an emulator for alternative architectures
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
