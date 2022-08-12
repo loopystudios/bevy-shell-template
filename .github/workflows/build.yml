@@ -72,18 +72,12 @@ jobs:
           sudo apt install libasound2-dev libudev-dev pkg-config
           cargo test --workspace
 
-  build:
+  build-native:
     needs: setup
-    runs-on: ubuntu-latest
     strategy:
       matrix:
-        target:
-          [
-            "wasm32-unknown-unknown",
-            "x86_64-unknown-linux-gnu",
-            "x86_64-apple-darwin",
-            "x86_64-pc-windows-gnu",
-          ]
+        os: ["ubuntu-latest", "windows-latest", "macOS-latest"]
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Pull setup tools
         uses: actions/cache@v3
@@ -97,22 +91,48 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ./target
-          key: ${{ matrix.target }}-${{ hashFiles('Cargo.lock') }}-${{ hashFiles('./src') }}-${{ hashFiles('./launchers') }}
+          key: ${{ RUNNER_OS }}-${{ hashFiles('Cargo.lock') }}-${{ hashFiles('./src') }}-${{ hashFiles('./launchers') }}
 
-      # Build release version
       - name: Checkout code
         if: steps.cache-build.outputs.cache-hit != 'true'
         uses: actions/checkout@v3
-      - name: Build native
+
+      - name: Get Linux dependencies
         if: |
           steps.cache-build.outputs.cache-hit != 'true' &&
-          matrix.target != 'wasm32-unknown-unknown'
+          RUNNER_OS == 'Linux'
         run: |
           sudo apt install libasound2-dev libudev-dev pkg-config
-          cargo build --workspace --target ${{ matrix.target }}
-      - name: Build web assembly
+
+      - name: Build
         if: |
-          steps.cache-build.outputs.cache-hit != 'true' &&
-          matrix.target == 'wasm32-unknown-unknown'
+          steps.cache-build.outputs.cache-hit != 'true'
+        run: |
+          cargo build --workspace
+
+  build-wasm:
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pull setup tools
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo
+          key: setup
+
+      - name: Pull build cache
+        id: cache-build
+        uses: actions/cache@v3
+        with:
+          path: ./target
+          key: WASM-${{ hashFiles('Cargo.lock') }}-${{ hashFiles('./src') }}-${{ hashFiles('./launchers') }}
+
+      - name: Checkout code
+        if: steps.cache-build.outputs.cache-hit != 'true'
+        uses: actions/checkout@v3
+
+      - name: Build
+        if: steps.cache-build.outputs.cache-hit != 'true'
         run: |
           trunk build
