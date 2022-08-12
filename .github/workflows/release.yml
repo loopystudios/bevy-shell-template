@@ -8,7 +8,6 @@ on:
 env:
   PUBLIC_URL: /bevy-shell-template/
   DOCKER_IMG_NAME: my-game
-  VERSION: ${GITHUB_REF#refs/*/}
 
 jobs:
   setup:
@@ -113,5 +112,5 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_IMG_NAME }}:${{ env.VERSION }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_IMG_NAME }}:${GITHUB_REF#refs/*/}
             ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.DOCKER_IMG_NAME }}:latest
