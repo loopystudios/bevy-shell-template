@@ -12,10 +12,10 @@ jobs:
   setup:
     runs-on: ubuntu-latest
     outputs:
-      version: ${{ steps.env-name.outputs.env }}
+      version: ${{ steps.version-tag.outputs.VERSION }}
     steps:
-      - name: Setup Environment Name
-        id: env-name
+      - name: Get tagged version
+        id: version-tag
         run: echo "::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}"
 
   build-windows:
