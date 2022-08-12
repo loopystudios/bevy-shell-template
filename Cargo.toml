@@ -3,27 +3,13 @@ name = "my-game"
 version = "0.1.0"
 edition = "2021"
 
-# Optimizations, primarily made for WASM
-# ---
-# In the future, when per-target profiles are allowed, we don't want these
-# optimizations for non-WASM targets.
-# Read more: https://github.com/rust-lang/cargo/issues/4897
-[profile.release]
-panic = 'abort'
-codegen-units = 1
-opt-level = 'z'
-lto = true
+[workspace]
+members = [
+    "launchers/wasm",
+    "launchers/native",
+]
 
 [dependencies]
 # Core dependencies
 bevy = "0.8.0"
-
-# Logging
 log = "0.4.17"
-
-# WASM
-wasm-bindgen = "0.2.82"
-yew = "0.19.3"
-yew-router = "0.16.0"
-console_error_panic_hook = "0.1.7"
-console_log = { version = "0.2.0" }

@@ -13,7 +13,7 @@ fn app() -> Html {
     html! {
         <div align="center">
             <h1>
-                { "Hello, World!" }
+                { "TODO: Canvas here" }
             </h1>
         </div>
     }
@@ -28,7 +28,7 @@ fn main() {
         std::panic::set_hook(Box::new(console_error_panic_hook::hook));
     }
 
-    info!("Loading...");
     yew::start_app::<Root>();
-    info!("Loaded!")
+    info!("Starting...");
+    my_game::app().run();
 }
