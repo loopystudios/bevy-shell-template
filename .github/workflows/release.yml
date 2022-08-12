@@ -7,6 +7,7 @@ on:
 
 env:
   RELEASE_NAME: my_game
+  PUBLIC_URL: /bevy-shell-template/
 
 jobs:
   setup:
@@ -100,7 +101,7 @@ jobs:
         if: steps.cache-build.outputs.cache-hit != 'true'
         run: |
           cd ./launchers/wasm
-          trunk build
+          trunk build --public-url ${{ env.PUBLIC_URL }}
 
   release-windows:
     needs: build-windows
