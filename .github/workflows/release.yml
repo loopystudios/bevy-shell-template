@@ -73,7 +73,7 @@ jobs:
         id: cache-build
         uses: actions/cache@v3
         with:
-          path: ./launchers/wasm/dist
+          path: ./launchers/wasm/
           key: release-wasm-${{ env.VERSION }}
       - name: Checkout code
         if: steps.cache-build.outputs.cache-hit != 'true'
@@ -149,7 +149,7 @@ jobs:
           fail_on_unmatched_files: true
           files: ./ubuntu-latest
 
-  release-wasm-github-pages:
+  release-github-pages:
     needs: build-wasm
     runs-on: ubuntu-latest
     steps:
@@ -164,14 +164,14 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./launchers/wasm/dist
 
-  release-wasm-docker:
+  release-docker-server:
     needs: build-wasm
     runs-on: ubuntu-latest
     steps:
       - name: Pull cache
         uses: actions/cache@v3
         with:
-          path: ./launchers/wasm/dist
+          path: ./launchers/wasm/.
           key: release-wasm-${{ env.VERSION }}
       # Qemu is an emulator for alternative architectures
       - name: Set up QEMU
