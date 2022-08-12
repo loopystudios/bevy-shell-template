@@ -9,7 +9,17 @@ env:
   RELEASE_NAME: my-game
 
 jobs:
+  setup:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.env-name.outputs.env }}
+    steps:
+      - name: Setup Environment Name
+        id: env-name
+        run: echo "::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}"
+
   build-windows:
+    needs: setup
     runs-on: windows-latest
     steps:
       - name: Pull build cache
@@ -17,7 +27,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ./target
-          key: release-windows-${{ env.VERSION }}
+          key: release-windows-${{ needs.setup.outputs.version }}
       - name: Checkout code
         if: steps.cache-build.outputs.cache-hit != 'true'
         uses: actions/checkout@v3
@@ -28,6 +38,7 @@ jobs:
           cargo build --release
 
   build-mac:
+    needs: setup
     runs-on: macos-latest
     steps:
       - name: Pull build cache
@@ -35,7 +46,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ./target
-          key: release-mac-${{ env.VERSION }}
+          key: release-mac-${{ needs.setup.outputs.version }}
       - name: Checkout code
         if: steps.cache-build.outputs.cache-hit != 'true'
         uses: actions/checkout@v3
@@ -46,6 +57,7 @@ jobs:
           cargo build --release
 
   build-ubuntu:
+    needs: setup
     runs-on: ubuntu-latest
     steps:
       - name: Pull build cache
@@ -53,7 +65,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ./target
-          key: release-ubuntu-${{ env.VERSION }}
+          key: release-ubuntu-${{ needs.setup.outputs.version }}
       - name: Checkout code
         if: steps.cache-build.outputs.cache-hit != 'true'
         uses: actions/checkout@v3
@@ -67,6 +79,7 @@ jobs:
           cargo build --release
 
   build-wasm:
+    needs: setup
     runs-on: ubuntu-latest
     steps:
       - name: Pull build cache
@@ -74,7 +87,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ./launchers/wasm/
-          key: release-wasm-${{ env.VERSION }}
+          key: release-wasm-${{ needs.setup.outputs.version }}
       - name: Checkout code
         if: steps.cache-build.outputs.cache-hit != 'true'
         uses: actions/checkout@v3
@@ -97,17 +110,17 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ./target
-          key: release-windows-${{ env.VERSION }}
+          key: release-windows-${{ needs.setup.outputs.version }}
       - name: Rename build
         run: |
-          mv ./target/release/native-launcher.exe ./my-game.exe
+          mv ./target/release/native-launcher.exe ./${{ env.RELEASE_NAME }}-${{ needs.setup.outputs.version }}.windows.exe
       - name: Upload
         uses: softprops/action-gh-release@v1
         with:
           draft: false
           prerelease: false
           fail_on_unmatched_files: true
-          files: ./my-game.exe
+          files: ./${{ env.RELEASE_NAME }}-${{ needs.setup.outputs.version }}.windows.exe
 
   release-mac:
     needs: build-mac
@@ -117,17 +130,17 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ./target
-          key: release-mac-${{ env.VERSION }}
+          key: release-mac-${{ needs.setup.outputs.version }}
       - name: Rename build
         run: |
-          mv ./target/release/native-launcher ./${{ env.RELEASE_NAME }}.darwin
+          mv ./target/release/native-launcher ./${{ env.RELEASE_NAME }}-${{ needs.setup.outputs.version }}.darwin
       - name: Upload
         uses: softprops/action-gh-release@v1
         with:
           draft: false
           prerelease: false
           fail_on_unmatched_files: true
-          files: ./${{ env.RELEASE_NAME }}.darwin
+          files: ./${{ env.RELEASE_NAME }}-${{ needs.setup.outputs.version }}.darwin
 
   release-ubuntu:
     needs: build-ubuntu
@@ -137,17 +150,17 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ./target
-          key: release-ubuntu-${{ env.VERSION }}
+          key: release-ubuntu-${{ needs.setup.outputs.version }}
       - name: Rename build
         run: |
-          mv ./target/release/native-launcher ./${{ env.RELEASE_NAME }}.linux
+          mv ./target/release/native-launcher ./${{ env.RELEASE_NAME }}-${{ needs.setup.outputs.version }}.linux
       - name: Upload
         uses: softprops/action-gh-release@v1
         with:
           draft: false
           prerelease: false
           fail_on_unmatched_files: true
-          files: ./${{ env.RELEASE_NAME }}.linux
+          files: ./${{ env.RELEASE_NAME }}-${{ needs.setup.outputs.version }}.linux
 
   release-github-pages:
     needs: build-wasm
@@ -157,7 +170,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ./launchers/wasm/dist
-          key: release-wasm-${{ env.VERSION }}
+          key: release-wasm-${{ needs.setup.outputs.version }}
       - name: Deploy, Github Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
@@ -172,7 +185,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ./launchers/wasm/.
-          key: release-wasm-${{ env.VERSION }}
+          key: release-wasm-${{ needs.setup.outputs.version }}
       # Qemu is an emulator for alternative architectures
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
@@ -185,10 +198,6 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      # Extract the version from the tag
-      - name: Get the version
-        id: get_version
-        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
       # Push HTTP server Docker image
       - name: Push to DockerHub
         uses: docker/build-push-action@v3
@@ -197,5 +206,5 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.RELEASE_NAME }}:${{ steps.get_version.outputs.VERSION }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.RELEASE_NAME }}:${{ needs.setup.outputs.version }}
             ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.RELEASE_NAME }}:latest
