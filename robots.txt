@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://kurbos.github.io/bevy-shell-template/sitemap.xml
