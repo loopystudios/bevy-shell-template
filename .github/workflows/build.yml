@@ -49,15 +49,37 @@ jobs:
       - name: Clippy
         run: |
           sudo apt install libasound2-dev libudev-dev pkg-config
-          cargo clippy -- --workspace -D warnings
+          cargo clippy --workspace -- -D warnings
 
-  build-native:
+  test:
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pull setup tools
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo
+          key: setup
+
+      # Checkout code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Execute unit tests
+      - name: Test
+        run: |
+          sudo apt install libasound2-dev libudev-dev pkg-config
+          cargo test --workspace
+
+  build:
     needs: setup
     runs-on: ubuntu-latest
     strategy:
       matrix:
         target:
           [
+            "wasm32-unknown-unknown",
             "x86_64-unknown-linux-gnu",
             "x86_64-apple-darwin",
             "x86_64-pc-windows-gnu",
@@ -70,51 +92,22 @@ jobs:
             ~/.cargo
           key: setup
 
-      # Check cache for existing revision of build
-      - name: Build cache
+      - name: Pull build cache
         id: cache-build
         uses: actions/cache@v3
         with:
           path: ./target
           key: ${{ matrix.target }}-${{ hashFiles('Cargo.lock') }}-${{ hashFiles('./src') }}-${{ hashFiles('./launchers') }}
 
-      # Checkout code
+      # Build release version
       - name: Checkout code
         if: steps.cache-build.outputs.cache-hit != 'true'
         uses: actions/checkout@v3
-
-      # Build release version
-      - name: Build
-        if: steps.cache-build.outputs.cache-hit != 'true'
+      - name: Build native
+        if: steps.cache-build.outputs.cache-hit != 'true' and matrix.target != "wasm32-unknown-unknown"
         run: |
           cargo build --workspace --target ${{ matrix.target }}
-
-  build-wasm:
-    needs: setup
-    runs-on: ubuntu-latest
-    steps:
-      - name: Pull setup tools
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.cargo
-          key: setup
-
-      # Check cache for existing revision of build
-      - name: Build cache
-        id: cache-build
-        uses: actions/cache@v3
-        with:
-          path: ./launchers/wasm/dist
-          key: wasm32-unknown-unknown-${{ hashFiles('Cargo.lock') }}-${{ hashFiles('./src') }}-${{ hashFiles('./launchers') }}
-
-      # Checkout code
-      - name: Checkout code
-        if: steps.cache-build.outputs.cache-hit != 'true'
-        uses: actions/checkout@v3
-
-      # Build release version
-      - name: Build
-        if: steps.cache-build.outputs.cache-hit != 'true'
+      - name: Build web assembly
+        if: steps.cache-build.outputs.cache-hit != 'true' and matrix.target == "wasm32-unknown-unknown"
         run: |
           trunk build
