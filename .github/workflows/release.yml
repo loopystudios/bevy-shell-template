@@ -68,7 +68,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
       - name: Get dependencies
-        if: steps.cache-build.outputs.cache-hit != 'true'
         run: |
           sudo apt install libasound2-dev libudev-dev pkg-config
       - name: Build
