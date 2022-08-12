@@ -169,13 +169,13 @@ jobs:
       - name: Pull cache
         uses: actions/cache@v3
         with:
-          path: ./launchers/wasm/dist
+          path: ./launchers/wasm/
           key: release-wasm-${{ needs.setup.outputs.version }}
       - name: Deploy, Github Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./launchers/wasm/dist
+          publish_dir: ./launchers/wasm/dist/
 
   release-docker-server:
     needs: build-wasm
@@ -184,7 +184,7 @@ jobs:
       - name: Pull cache
         uses: actions/cache@v3
         with:
-          path: ./launchers/wasm/.
+          path: ./launchers/wasm/
           key: release-wasm-${{ needs.setup.outputs.version }}
       # Qemu is an emulator for alternative architectures
       - name: Set up QEMU
