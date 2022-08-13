@@ -1,4 +1,6 @@
-use log::info;
+use bevy::prelude::*;
+use stylist::yew::styled_component;
+use stylist::{css, global_style};
 use yew::prelude::*;
 
 #[function_component(Root)]
@@ -8,27 +10,52 @@ pub fn root() -> Html {
     }
 }
 
-#[function_component(App)]
+#[styled_component(App)]
 fn app() -> Html {
+    global_style! {
+        r#"
+        html {
+            min-height: 100%;
+            position: relative;
+        }
+        body {
+            height: 100%;
+            background-color: black;
+            padding: 0;
+            margin: 0;
+        }
+        "#
+    }
+    .unwrap();
+
+    let style = css! {
+        r#"
+        & {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+        }
+        "#
+    };
+
     html! {
-        <div align="center">
-            <h1>
-                { "TODO: Canvas here" }
-            </h1>
+        <div id="ctr" class={ style }>
+            <canvas id="bevy"></canvas>
         </div>
     }
 }
 
 fn main() {
-    #[cfg(debug_assertions)]
-    {
-        // Initialize log and panics to forward to browser log if debug mode
-        console_log::init_with_level(log::Level::Trace)
-            .expect("Failed to initialise log!");
-        std::panic::set_hook(Box::new(console_error_panic_hook::hook));
-    }
-
+    // Mount the DOM
     yew::start_app::<Root>();
-    info!("Starting...");
-    my_game::app().run();
+
+    // Start the Bevy App
+    let mut app = my_game::app();
+    info!("Starting launcher: WASM");
+    app.run();
 }

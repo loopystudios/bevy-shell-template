@@ -6,4 +6,9 @@ target = "launchers/wasm/index.html"
 
 [watch]
 # Watch top level dir (all crates)
-watch = ["."]
+watch = ["src", "launchers/wasm/src"]
+
+[[hooks]]
+stage = "pre_build"
+command = "cp"
+command_arguments = ["-r", "assets", "launchers/wasm/"]

@@ -9,7 +9,9 @@ members = [
     "launchers/native",
 ]
 
+[[bin]]
+name="native-launcher"
+path="launchers/native/src/main.rs"
+
 [dependencies]
-# Core dependencies
 bevy = "0.8.0"
-log = "0.4.17"
