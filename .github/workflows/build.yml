@@ -10,15 +10,14 @@ jobs:
   build-windows:
     runs-on: windows-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
       - name: Pull build cache
         id: cache-build
         uses: actions/cache@v3
         with:
           path: ./target
           key: windows-${{ hashFiles('Cargo.lock') }}-${{ hashFiles('./src') }}-${{ hashFiles('./launchers') }}
-      - name: Checkout code
-        if: steps.cache-build.outputs.cache-hit != 'true'
-        uses: actions/checkout@v3
       - name: Build
         if: steps.cache-build.outputs.cache-hit != 'true'
         run: |
@@ -28,15 +27,14 @@ jobs:
   build-mac:
     runs-on: macos-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
       - name: Pull build cache
         id: cache-build
         uses: actions/cache@v3
         with:
           path: ./target
           key: mac-${{ hashFiles('Cargo.lock') }}-${{ hashFiles('./src') }}-${{ hashFiles('./launchers') }}
-      - name: Checkout code
-        if: steps.cache-build.outputs.cache-hit != 'true'
-        uses: actions/checkout@v3
       - name: Build
         if: steps.cache-build.outputs.cache-hit != 'true'
         run: |
@@ -46,15 +44,14 @@ jobs:
   build-ubuntu:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
       - name: Pull build cache
         id: cache-build
         uses: actions/cache@v3
         with:
           path: ./target
           key: ubuntu-${{ hashFiles('Cargo.lock') }}-${{ hashFiles('./src') }}-${{ hashFiles('./launchers') }}
-      - name: Checkout code
-        if: steps.cache-build.outputs.cache-hit != 'true'
-        uses: actions/checkout@v3
       - name: Get dependencies
         if: steps.cache-build.outputs.cache-hit != 'true'
         run: sudo apt install libasound2-dev libudev-dev pkg-config
@@ -67,15 +64,14 @@ jobs:
   build-wasm:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
       - name: Pull build cache
         id: cache-build
         uses: actions/cache@v3
         with:
           path: ./launchers/wasm/dist
           key: wasm-${{ hashFiles('Cargo.lock') }}-${{ hashFiles('./src') }}-${{ hashFiles('./launchers') }}
-      - name: Checkout code
-        if: steps.cache-build.outputs.cache-hit != 'true'
-        uses: actions/checkout@v3
       - name: Install Trunk
         if: steps.cache-build.outputs.cache-hit != 'true'
         uses: jetli/trunk-action@v0.1.0
