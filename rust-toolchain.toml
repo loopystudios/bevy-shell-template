@@ -6,3 +6,4 @@ targets = [
     "x86_64-apple-darwin",
     "x86_64-pc-windows-gnu"
 ]
+profile = "minimal"
