@@ -2,7 +2,7 @@
 <div align="center">
 
 # 🕊️ Bevy Shell - Template 
-An opinionated, monolithic template for Bevy with cross-platform CI/CD, native + WASM launchers, and managed cross-platform deployment.
+*An opinionated, monolithic template for Bevy with cross-platform CI/CD, native + WASM launchers, and managed cross-platform deployment.*
 
 <img src="https://user-images.githubusercontent.com/20546772/184515793-9f7dea0d-ff21-45ba-9869-49804094e237.png" width="auto" height="600px"/>
 
@@ -66,7 +66,8 @@ To automatically serve your WASM bundle like [our demo](https://kurbos.github.io
 - [Cut a release](#release-cutting) and wait for pipeline completion
 - On your GitHub fork, visit Settings > Pages
 - Select `gh-pages` branch from the dropdown menu and press "Save".
-![image](https://user-images.githubusercontent.com/20546772/184507297-e0f7ff46-57e6-4329-9a79-f2d5ceb5d97a.png)
+
+  <img src="https://user-images.githubusercontent.com/20546772/184507297-e0f7ff46-57e6-4329-9a79-f2d5ceb5d97a.png" width="600" height="auto"/>
 
 ### Docker
 To serve your WASM bundle with Docker, here are the steps:
@@ -83,12 +84,16 @@ To serve your WASM bundle with Docker, here are the steps:
 
 🔸 The [`Dockerfile`](launchers/wasm/Dockerfile) uses NGINX, and uses [`Docker.nginx.conf`](launchers/wasm/Docker.nginx.conf) for configuration.
 
-## 🚀 Launcher Differences
+## 🚀 Launchers
 ### WASM (Web)
+This launcher depends on the [trunk](https://trunkrs.dev/) crate.
+To build and run the WASM app locally:
+> Serve with `trunk serve` and open [`http://127.0.0.1:8080`](http://127.0.0.1:8080) in your browser
 - Assets are streamed through the hosting provider, so that the initial WASM bundle is smaller.
 - We use all the WASM optimizations discussed described [here](https://rustwasm.github.io/book/reference/code-size.html) in the Rust and WebAssembly book.
 - There is an initial loading screen provided through [Yew](https://yew.rs) while the WASM bundle loads.
 
 ### Native (Windows, MacOS, Linux)
+> Run with `cargo run`
 - Assets are bundled with the release when cut.
 - There is no loading screen.
