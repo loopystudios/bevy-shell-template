@@ -14,6 +14,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Install dependencies
+        run: sudo apt install libasound2-dev libudev-dev pkg-config
+
       # Unit testing
       - name: Test
         run: cargo test --workspace
