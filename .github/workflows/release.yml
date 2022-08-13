@@ -97,8 +97,7 @@ jobs:
           version: "latest"
       - name: Trunk Build
         run: |
-          cd ./launchers/wasm
-          trunk build --public-url ${{ env.PUBLIC_URL }}
+          trunk build --release --public-url ${{ env.PUBLIC_URL }}
       ## Deploy - GitHub Pages
       - name: Deploy, Github Pages
         uses: peaceiris/actions-gh-pages@v3
