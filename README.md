@@ -2,20 +2,28 @@
 An opinionated template for Bevy with CI/CD, Native + WASM launchers, free hosting with GitHub Pages and DockerHub, and GitOps release cutting.
 
 ## Multi-platform CI/CD
-TODO - Talk about how there are github actions for building on all platforms + wasm with GitHub Actions
+This shell template used the free CI/CD tools provided by GitHub Actions, which can be accessed by navigating to the "Actions" tab of the repo.  This enables automatically building releases for all 3 major platforms: web, Linux, and Windows for every release you cut.
+
 ### Automated dependency management
-TODO - Dependencies manager with Renovate
+IDK - Dependencies manager with Renovate
+
 ### Automated testing
-TODO - Pull requests and pushes to the main branch trigger CI automatically
+Pull requests and pushes to the main branch trigger CI automatically.
+
 ### Release cutting
-TODO - Releases package the game for all 3 major platforms to download (link to releases) and update WASM version automatically through GitHub Pages
+Releases package the game for all 3 major platforms to [download](https://github.com/kurbos/bevy-shell-template/releases) and update the WASM web page automatically through GitHub Pages.
 
 ## Hosting
-### GitHub Pages (free hosting)
-TODO show how to setup GitHub Pages (just need to cut a release, go to settings > Pages > enable from the branch `gh-pages`)
+### GitHub Pages
+From your github repo page, go to Settings > Pages > Select `gh-pages` branch from the dropdown menu and press "Save".
+
+![image](https://user-images.githubusercontent.com/20546772/184507297-e0f7ff46-57e6-4329-9a79-f2d5ceb5d97a.png)
 
 ## Launcher
 ### WASM
-TODO - Streams assets through HTTP server so initial WASM bundle is smaller. Talk about WASM optimizations made to decrease bundle size Provide loading screen screenshot
+The launcher streams assets through an HTTP server, so that the initial WASM bundle is smaller. IDK - Talk about WASM optimizations made to decrease bundle size 
+Provide loading screen screenshot
+![image](https://user-images.githubusercontent.com/20546772/184507403-1ceec682-6a7b-46c8-965e-ff484cc348e0.png)
+
 ### Native
 TODO - Provide image of windows, linux (+ mac if possible)
