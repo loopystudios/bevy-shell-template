@@ -58,6 +58,7 @@
 
     <!-- Trunk Directives -->
     <link rel=copy-dir data-trunk href="static/" />
+    <link rel=copy-dir data-trunk href="assets/" />
     <link rel=copy-file data-trunk href="robots.txt" />
     <link rel=copy-file data-trunk href="sitemap.xml" />
     <link rel=rust data-trunk />
@@ -66,20 +67,6 @@
 <body>
     <!-- The following is a loading modal which displays when waiting for WASM load. -->
     <style>
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --fg: rgb(204, 204, 204);
-                --bg: rgb(34, 34, 34);
-            }
-        }
-
-        @media (prefers-color-scheme: light) {
-            :root {
-                --fg: rgb(68, 68, 68);
-                --bg: rgb(255, 255, 255);
-            }
-        }
-
         svg {
             width: 100px;
             height: 100px;
@@ -92,8 +79,8 @@
             align-items: center;
             flex-direction: column;
             min-height: 100vh;
-            background: var(--bg);
-            color: var(--fg);
+            background: rgb(34, 34, 34);
+            color: rgb(204, 204, 204);
         }
     </style>
     <svg version=" 1.1" id="L3" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px"
