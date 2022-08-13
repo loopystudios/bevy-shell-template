@@ -80,5 +80,4 @@ jobs:
       - name: Trunk Build
         if: steps.cache-build.outputs.cache-hit != 'true'
         run: |
-          cd ./launchers/wasm
           trunk build
