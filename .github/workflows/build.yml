@@ -20,9 +20,7 @@ jobs:
           key: windows-${{ hashFiles('Cargo.lock') }}-${{ hashFiles('./src') }}-${{ hashFiles('./launchers') }}
       - name: Build
         if: steps.cache-build.outputs.cache-hit != 'true'
-        run: |
-          cd ./launchers/native
-          cargo build
+        run: cargo build
 
   build-mac:
     runs-on: macos-latest
@@ -37,9 +35,7 @@ jobs:
           key: mac-${{ hashFiles('Cargo.lock') }}-${{ hashFiles('./src') }}-${{ hashFiles('./launchers') }}
       - name: Build
         if: steps.cache-build.outputs.cache-hit != 'true'
-        run: |
-          cd ./launchers/native
-          cargo build
+        run: cargo build
 
   build-ubuntu:
     runs-on: ubuntu-latest
@@ -57,9 +53,7 @@ jobs:
         run: sudo apt install libasound2-dev libudev-dev pkg-config
       - name: Build
         if: steps.cache-build.outputs.cache-hit != 'true'
-        run: |
-          cd ./launchers/native
-          cargo build
+        run: cargo build
 
   build-wasm:
     runs-on: ubuntu-latest

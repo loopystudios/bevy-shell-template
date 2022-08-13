@@ -27,9 +27,7 @@ jobs:
         run: sudo apt install libasound2-dev libudev-dev pkg-config
       - name: Build
         if: steps.cache-build.outputs.cache-hit != 'true'
-        run: |
-          cd ./launchers/native
-          cargo build
+        run: cargo build --workspace
 
       # Unit testing
       - name: Test
