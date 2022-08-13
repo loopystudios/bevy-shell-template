@@ -3201,6 +3201,7 @@ dependencies = [
  "bevy",
  "my-game",
  "stylist",
+ "web-sys",
  "yew",
 ]
 
