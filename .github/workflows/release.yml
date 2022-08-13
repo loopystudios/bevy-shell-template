@@ -36,6 +36,7 @@ jobs:
         uses: vimtor/action-zip@v1
         with:
           files: assets/ ./${{ env.RELEASE_NAME }}.exe
+          recursive: false
           dest: ./${{ env.RELEASE_NAME }}-${{ needs.setup.outputs.version }}-windows.zip
       - name: Upload
         uses: softprops/action-gh-release@v1
@@ -62,6 +63,7 @@ jobs:
         uses: vimtor/action-zip@v1
         with:
           files: assets/ ./${{ env.RELEASE_NAME }}
+          recursive: false
           dest: ./${{ env.RELEASE_NAME }}-${{ needs.setup.outputs.version }}-darwin.zip
       - name: Upload
         uses: softprops/action-gh-release@v1
@@ -91,6 +93,7 @@ jobs:
         uses: vimtor/action-zip@v1
         with:
           files: assets/ ./${{ env.RELEASE_NAME }}
+          recursive: false
           dest: ./${{ env.RELEASE_NAME }}-${{ needs.setup.outputs.version }}-ubuntu.zip
       - name: Upload
         uses: softprops/action-gh-release@v1
