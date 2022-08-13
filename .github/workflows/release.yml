@@ -31,14 +31,19 @@ jobs:
           cargo build --release
       - name: Rename
         run: |
-          mv ./target/release/native-launcher.exe ./${{ env.RELEASE_NAME }}-${{ needs.setup.outputs.version }}.windows.exe
+          mv ./target/release/native-launcher.exe ./${{ env.RELEASE_NAME }}.exe
+      - name: Zip release
+        uses: vimtor/action-zip@v1
+        with:
+          files: assets/ ./${{ env.RELEASE_NAME }}.exe
+          dest: ./${{ env.RELEASE_NAME }}-${{ needs.setup.outputs.version }}-windows.zip
       - name: Upload
         uses: softprops/action-gh-release@v1
         with:
           draft: false
           prerelease: false
           fail_on_unmatched_files: true
-          files: ./${{ env.RELEASE_NAME }}-${{ needs.setup.outputs.version }}.windows.exe
+          files: ./${{ env.RELEASE_NAME }}-${{ needs.setup.outputs.version }}-windows.zip
 
   release-mac:
     needs: setup
@@ -52,14 +57,19 @@ jobs:
           cargo build --release
       - name: Rename
         run: |
-          mv ./target/release/native-launcher ./${{ env.RELEASE_NAME }}-${{ needs.setup.outputs.version }}.darwin
+          mv ./target/release/native-launcher ./${{ env.RELEASE_NAME }}
+      - name: Zip release
+        uses: vimtor/action-zip@v1
+        with:
+          files: assets/ ./${{ env.RELEASE_NAME }}
+          dest: ./${{ env.RELEASE_NAME }}-${{ needs.setup.outputs.version }}-darwin.zip
       - name: Upload
         uses: softprops/action-gh-release@v1
         with:
           draft: false
           prerelease: false
           fail_on_unmatched_files: true
-          files: ./${{ env.RELEASE_NAME }}-${{ needs.setup.outputs.version }}.darwin
+          files: ./${{ env.RELEASE_NAME }}-${{ needs.setup.outputs.version }}-darwin.zip
 
   release-ubuntu:
     needs: setup
@@ -76,14 +86,19 @@ jobs:
           cargo build --release
       - name: Rename
         run: |
-          mv ./target/release/native-launcher ./${{ env.RELEASE_NAME }}-${{ needs.setup.outputs.version }}.linux
+          mv ./target/release/native-launcher ./${{ env.RELEASE_NAME }}
+      - name: Zip release
+        uses: vimtor/action-zip@v1
+        with:
+          files: assets/ ./${{ env.RELEASE_NAME }}
+          dest: ./${{ env.RELEASE_NAME }}-${{ needs.setup.outputs.version }}-ubuntu.zip
       - name: Upload
         uses: softprops/action-gh-release@v1
         with:
           draft: false
           prerelease: false
           fail_on_unmatched_files: true
-          files: ./${{ env.RELEASE_NAME }}-${{ needs.setup.outputs.version }}.linux
+          files: ./${{ env.RELEASE_NAME }}-${{ needs.setup.outputs.version }}-ubuntu.zip
 
   release-wasm:
     needs: setup
