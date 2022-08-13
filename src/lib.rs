@@ -1,18 +1,17 @@
 use bevy::prelude::*;
 
-const CLEAR_COLOR: ClearColor = ClearColor(Color::rgb(0.0, 0.0, 1.0));
+pub const LAUNCHER_TITLE: &str = "Bevy Shell - Template";
 
 pub fn app() -> App {
     let mut app = App::new();
-    app.insert_resource(CLEAR_COLOR)
-        .insert_resource(WindowDescriptor {
-            title: "Bevy Shell - Template".to_string(),
-            canvas: Some("#bevy".to_string()),
-            fit_canvas_to_parent: true,
-            ..Default::default()
-        })
-        .add_plugins(DefaultPlugins)
-        .add_startup_system(load_icon);
+    app.insert_resource(WindowDescriptor {
+        title: LAUNCHER_TITLE.to_string(),
+        canvas: Some("#bevy".to_string()),
+        fit_canvas_to_parent: true,
+        ..Default::default()
+    })
+    .add_plugins(DefaultPlugins)
+    .add_startup_system(load_icon);
     app
 }
 

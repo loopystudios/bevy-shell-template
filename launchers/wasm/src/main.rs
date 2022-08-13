@@ -3,15 +3,17 @@ use stylist::yew::styled_component;
 use stylist::{css, global_style};
 use yew::prelude::*;
 
-#[function_component(Root)]
-pub fn root() -> Html {
-    html! {
-        <App />
-    }
+use my_game::LAUNCHER_TITLE;
+
+fn set_window_title(title: &str) {
+    web_sys::window()
+        .map(|w| w.document())
+        .flatten()
+        .expect("Unable to get DOM")
+        .set_title(title);
 }
 
-#[styled_component(App)]
-fn app() -> Html {
+fn set_global_css() {
     global_style! {
         r#"
         html {
@@ -20,31 +22,30 @@ fn app() -> Html {
         }
         body {
             height: 100%;
-            background-color: black;
             padding: 0;
             margin: 0;
         }
         "#
     }
-    .unwrap();
+    .expect("Unable to mount global style");
+}
 
-    let style = css! {
+#[styled_component(Root)]
+fn view() -> Html {
+    set_window_title(LAUNCHER_TITLE);
+    set_global_css();
+
+    let css = css!(
         r#"
-        & {
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            overflow: hidden;
-            width: 100%;
-            height: 100%;
-        }
+        position: absolute;
+        overflow: hidden;
+        width: 100%;
+        height: 100%;
         "#
-    };
+    );
 
     html! {
-        <div id="ctr" class={ style }>
+        <div class={ css }>
             <canvas id="bevy"></canvas>
         </div>
     }
@@ -53,7 +54,6 @@ fn app() -> Html {
 fn main() {
     // Mount the DOM
     yew::start_app::<Root>();
-
     // Start the Bevy App
     let mut app = my_game::app();
     info!("Starting launcher: WASM");
