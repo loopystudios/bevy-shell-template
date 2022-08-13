@@ -13,5 +13,14 @@ members = [
 name="native-launcher"
 path="launchers/native/src/main.rs"
 
+# Optimizations for WASM
+[profile.release]
+panic = 'abort'
+codegen-units = 1
+opt-level = 'z'
+lto = true
+
 [dependencies]
 bevy = "0.8.0"
+image = "0.24.3"
+winit = "0.26.1"
