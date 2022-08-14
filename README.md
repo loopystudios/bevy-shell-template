@@ -18,7 +18,7 @@
 - Best practices in GitOps and IaC
 
 # ✅ Quickstart
-- [Fork this repository](https://github.com/kurbos/bevy-shell-template/fork)
+- [Use](https://github.com/kurbos/bevy-shell-template/generate) or [Fork](https://github.com/kurbos/bevy-shell-template/fork) this template
 - [Setup RenovateBot](https://github.com/marketplace/renovate) with permissions to your repository to automatically detect dependency updates
 - Setup your WASM build with one of:
   - [GitHub Pages](#github-pages) *(I'm new to hosting, no equipment)*
@@ -47,12 +47,12 @@ Pushing to the main branch automatically triggers CI pipelines:
 🔸 You can ensure all pull requests must pass CI testing before merging through [GitHub's branch protection rules](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/defining-the-mergeability-of-pull-requests/managing-a-branch-protection-rule).
 
 ### Automated dependency management
-[Renovate](https://github.com/marketplace/renovate) is a free open source bot on GitHub for your fork which allow automatically creates pull requests for dependency updates on your projects. This template's [Renovate settings file](.github/renovate.json) allows for automatic merging of minor and patch updates, if all CI tests pass. You can change these settings yourself.
+[Renovate](https://github.com/marketplace/renovate) is a free open source bot on GitHub for your repositories to automatically create pull requests for dependency updates on your projects. This template's [Renovate settings file](.github/renovate.json) allows for automatic merging of minor and patch updates, if all CI tests pass. You can change these settings yourself.
 
 🔸 More information is available at [renovatebot.com](https://renovatebot.com/)
 
 ### Release cutting
-Creating a release on your fork will trigger the release pipeline, which packages [download bundles]((https://github.com/kurbos/bevy-shell-template/releases/latest)) for all 3 major platforms. Additionally, the pipeline will create a branch `gh-pages` with the WASM bundle to serve by GitHub Pages ([demo](https://kurbos.github.io/bevy-shell-template)), or DockerHub image ([example](https://hub.docker.com/repository/docker/simbleau/my_game)), depending on the [hosting strategy](#hosting) you choose to setup.
+Creating a release on your template will trigger the release pipeline, which packages [download bundles]((https://github.com/kurbos/bevy-shell-template/releases/latest)) for all 3 major platforms. Additionally, the pipeline will create a branch `gh-pages` with the WASM bundle to serve by GitHub Pages ([demo](https://kurbos.github.io/bevy-shell-template)), or DockerHub image ([example](https://hub.docker.com/repository/docker/simbleau/my_game)), depending on the [hosting strategy](#hosting) you choose to setup.
 
 > 🔥 **WARNING: We enforce releases are tagged with a semantic version name**, e.g. "*v0.1.0*", not "*v1*"
 > This can be modified on the [`release-*` workflow files](.github/workflows/).
@@ -66,7 +66,7 @@ To automatically serve your WASM bundle like [our demo](https://kurbos.github.io
   - If the repo name is the same as the repo owner, this should be `/`, otherwise, it will should be `/<repository-name>/` (e.g. `/bevy-shell-template/`)
 - *Optional*: Delete the [DockerHub GitHub Action](.github/workflows/release-dockerhub.yml), as you probably don't need it.
 - [Cut a release](#release-cutting) and wait for pipeline completion
-- On your GitHub fork, visit Settings > Pages
+- On your GitHub template repo, visit Settings > Pages
 - Select `gh-pages` branch from the dropdown menu and press "Save".
 
   <img src="https://user-images.githubusercontent.com/20546772/184507297-e0f7ff46-57e6-4329-9a79-f2d5ceb5d97a.png" width="600" height="auto"/>
