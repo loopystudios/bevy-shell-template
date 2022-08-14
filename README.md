@@ -64,7 +64,7 @@ There are two ways to host the WASM build of your Bevy game, with Docker or GitH
 To automatically serve your WASM bundle like [our demo](https://kurbos.github.io/bevy-shell-template/), here are the steps:
 - Modify the [GitHub Pages GitHub Action file](.github/workflows/release-gh-pages.yml)'s variarable `PUBLIC_URL` with the slug for your GitHub Pages hosting. 
   - If the repo name is the same as the repo owner, this should be `/`, otherwise, it will should be `/<repository-name>/` (e.g. `/bevy-shell-template/`)
-- *Optional*: Delete the [Docker GitHub Action](), as you probably don't need it.
+- *Optional*: Delete the [DockerHub GitHub Action](.github/workflows/release-dockerhub.yml), as you probably don't need it.
 - [Cut a release](#release-cutting) and wait for pipeline completion
 - On your GitHub fork, visit Settings > Pages
 - Select `gh-pages` branch from the dropdown menu and press "Save".
@@ -79,7 +79,7 @@ To serve your WASM bundle with Docker, here are the steps:
   - `DOCKERHUB_USERNAME` Your DockerHub username (e.g. *simbleau*)
   - `DOCKERHUB_TOKEN` A [DockerHub access token](https://docs.docker.com/docker-hub/access-tokens/) with write privileges
 - Modify the [DockerHub GitHub Action file](.github/workflows/release-dockerhub.yml)'s variable `RELEASE_NAME` with your desired image name (e.g. `my_game`)
-- *Optional*: Delete the [GitHub Pages GitHub Action](), as you probably don't need it.
+- *Optional*: Delete the [GitHub Pages GitHub Action](.github/workflows/release-gh-pages.yml), as you probably don't need it.
 - [Cut a release](#release-cutting) and wait for pipeline completion
 - On your server hardware with Docker installed, run `docker run -p 80:80 <DOCKERHUB_USERNAME>/<RELEASE_NAME>:latest`, which should pull from DockerHub automatically.
 - Your WASM build should be served via `http://localhost:80`, where `localhost` is your server's address
