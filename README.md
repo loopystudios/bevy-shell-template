@@ -1,10 +1,10 @@
 
 <div align="center">
 
-# 🕊️ Bevy Shell - Template 
+# 🕊️ Bevy Shell - Template
 *An opinionated, monolithic template for Bevy with cross-platform CI/CD, native + WASM launchers, and managed cross-platform deployment.*
 
-<img src="https://user-images.githubusercontent.com/20546772/184515793-9f7dea0d-ff21-45ba-9869-49804094e237.png" width="auto" height="600px"/>
+<img src="https://user-images.githubusercontent.com/20546772/184515793-9f7dea0d-ff21-45ba-9869-49804094e237.png" width="756px" height="600px"/>
 
 </div>
 
