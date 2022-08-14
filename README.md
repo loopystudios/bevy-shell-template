@@ -24,6 +24,8 @@
   - [GitHub Pages](#github-pages) *(I'm new to hosting, no equipment)*
   - [Docker](#docker) *(I know what I'm doing)*
 - **Optional**: Modify your Bevy App, which is self-contained in [`src/`](src/)
+  - You can preview your WASM version with `trunk serve` ([Trunk](https://trunkrs.dev) required)
+  - You can preview the Native version with `cargo run`
 - [Cut a release](#release-cutting) to cross-deploy your game across WASM, Windows, Mac, and Linux
 
 ---
