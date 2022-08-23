@@ -21,6 +21,6 @@ opt-level = 'z'
 lto = true
 
 [dependencies]
-bevy = "0.8.0"
+bevy = "0.8.1"
 image = "0.24.3"
 winit = "0.26.1"
