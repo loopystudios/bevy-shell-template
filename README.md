@@ -52,7 +52,7 @@ Pushing to the main branch automatically triggers CI pipelines:
 🔸 More information is available at [renovatebot.com](https://renovatebot.com/)
 
 ### Release cutting
-Creating a release on your template will trigger the release pipeline, which packages [download bundles]((https://github.com/kurbos/bevy-shell-template/releases/latest)) for all 3 major platforms. Additionally, the pipeline will create a branch `gh-pages` with the WASM bundle to serve by GitHub Pages ([demo](https://kurbos.github.io/bevy-shell-template)), or DockerHub image ([example](https://hub.docker.com/repository/docker/simbleau/my_game)), depending on the [hosting strategy](#hosting) you choose to setup.
+Creating a release on your template will trigger the release pipeline, which packages [download bundles]((https://github.com/kurbos/bevy-shell-template/releases/latest)) for all 3 major platforms. Additionally, the pipeline will create a branch `gh-pages` with the WASM bundle to serve by GitHub Pages ([demo](https://kurbos.github.io/bevy-shell-template)), or DockerHub image ([example](https://hub.docker.com/repository/docker/simbleau/my_game)), depending on the [hosting strategy](#-hosting) you choose to setup.
 
 > 🔥 **WARNING: We enforce releases are tagged with a semantic version name**, e.g. "*v0.1.0*", not "*v1*"
 > This can be modified on the [`release-*` workflow files](.github/workflows/).
