@@ -2,26 +2,13 @@ use bevy::{prelude::*, window::WindowMode};
 
 pub const LAUNCHER_TITLE: &str = "Bevy Shell - Template";
 
-pub fn app() -> App {
+pub fn app(fullscreen: bool) -> App {
     let mut app = App::new();
     app.insert_resource(WindowDescriptor {
         title: LAUNCHER_TITLE.to_string(),
         canvas: Some("#bevy".to_string()),
         fit_canvas_to_parent: true,
-        ..Default::default()
-    })
-    .add_plugins(DefaultPlugins)
-    .add_startup_system(load_icon);
-    app
-}
-
-pub fn fullscreen_app() -> App {
-    let mut app = App::new();
-    app.insert_resource(WindowDescriptor {
-        title: LAUNCHER_TITLE.to_string(),
-        canvas: Some("#bevy".to_string()),
-        fit_canvas_to_parent: true,
-        mode: WindowMode::BorderlessFullscreen,
+        mode: WindowMode::BorderlessFullscreen if fullscreen else WindowMode::Windowed,
         ..Default::default()
     })
     .add_plugins(DefaultPlugins)

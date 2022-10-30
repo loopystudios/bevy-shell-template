@@ -24,7 +24,7 @@ fn set_window_icon(windows: NonSend<WinitWindows>) {
 }
 
 fn main() {
-    let mut app = my_game::app();
+    let mut app = my_game::app(false);
 
     info!("Starting launcher: Native");
     app.add_startup_system(set_window_icon);
