@@ -18,8 +18,6 @@ fn set_window_icon(windows: NonSend<WinitWindows>) {
         (icon_raw, width, height)
     };
 
-    println!("{} x {}", icon_width, icon_height);
-
     let icon = Icon::from_rgba(icon_rgba, icon_width, icon_height).unwrap();
 
     primary.set_window_icon(Some(icon));
