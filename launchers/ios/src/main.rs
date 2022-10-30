@@ -26,7 +26,7 @@ fn set_window_icon(windows: NonSend<WinitWindows>) {
 fn main() {
     let mut app = my_game::fullscreen_app();
 
-    info!("Starting launcher: Native");
+    info!("Starting launcher: iOS");
     app.add_startup_system(set_window_icon);
     app.run();
 }
