@@ -1,4 +1,4 @@
-name: build
+name: Build & Test
 
 on:
   push:
@@ -12,12 +12,14 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      - name: Pull build cache
-        id: cache-build
+      - name: Pull Rust cache
         uses: actions/cache@v3
         with:
-          path: ./target
-          key: windows-${{ hashFiles('Cargo.lock') }}-${{ hashFiles('./src') }}-${{ hashFiles('./launchers') }}
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
       - name: Build
         if: steps.cache-build.outputs.cache-hit != 'true'
         run: cargo build
@@ -27,12 +29,14 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      - name: Pull build cache
-        id: cache-build
+      - name: Pull Rust cache
         uses: actions/cache@v3
         with:
-          path: ./target
-          key: mac-${{ hashFiles('Cargo.lock') }}-${{ hashFiles('./src') }}-${{ hashFiles('./launchers') }}
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
       - name: Build
         if: steps.cache-build.outputs.cache-hit != 'true'
         run: cargo build
@@ -42,12 +46,14 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      - name: Pull build cache
-        id: cache-build
+      - name: Pull Rust cache
         uses: actions/cache@v3
         with:
-          path: ./target
-          key: ubuntu-${{ hashFiles('Cargo.lock') }}-${{ hashFiles('./src') }}-${{ hashFiles('./launchers') }}
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
       - name: Get dependencies
         if: steps.cache-build.outputs.cache-hit != 'true'
         run: sudo apt install libasound2-dev libudev-dev pkg-config
@@ -60,12 +66,14 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      - name: Pull build cache
-        id: cache-build
+      - name: Pull Rust cache
         uses: actions/cache@v3
         with:
-          path: ./launchers/wasm/dist
-          key: wasm-${{ hashFiles('Cargo.lock') }}-${{ hashFiles('./src') }}-${{ hashFiles('./launchers') }}
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-wasm-cargo-${{ hashFiles('**/Cargo.lock') }}
       - name: Install Trunk
         if: steps.cache-build.outputs.cache-hit != 'true'
         uses: jetli/trunk-action@v0.1.0
@@ -74,3 +82,50 @@ jobs:
       - name: Trunk Build
         if: steps.cache-build.outputs.cache-hit != 'true'
         run: trunk build
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Get dependencies
+        if: steps.cache-build.outputs.cache-hit != 'true'
+        run: sudo apt install libasound2-dev libudev-dev pkg-config
+      - name: Pull Rust cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-test-cargo-${{ hashFiles('**/Cargo.lock') }}
+      # Unit testing
+      - name: Test
+        run: cargo test --workspace
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Pull Rust cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-lint-cargo-${{ hashFiles('**/Cargo.lock') }}
+      - name: Get dependencies
+        if: steps.cache-build.outputs.cache-hit != 'true'
+        run: sudo apt install libasound2-dev libudev-dev pkg-config
+      - name: Update local toolchain
+        run: |
+          rustup update
+          rustup component add clippy 
+          rustup component add rustfmt
+      - name: cargo fmt
+        run: |
+          cargo fmt -- --check
+      - name: cargo clippy
+        run: |
+          cargo clippy --all-targets --all-features -- -D warnings  
