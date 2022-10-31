@@ -1,0 +1,48 @@
+name: release-ios
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+env:
+  RELEASE_NAME: my_game
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version-tag.outputs.VERSION }}
+    steps:
+      - name: Get tagged version
+        id: version-tag
+        run: echo "::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}"
+
+  release-ios:
+    needs: setup
+    runs-on: macos-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Build
+        run: |
+          cd ./launchers/ios
+          cargo install cargo-bundle
+          cargo bundle --release --format ios --target x86_64-apple-ios
+      - name: Rename
+        run: |
+          cd ./launchers/ios
+          mv ./target/release/ios-launcher ../../${{ env.RELEASE_NAME }}
+      - name: Zip release
+        uses: vimtor/action-zip@v1
+        with:
+          files: ./${{ env.RELEASE_NAME }}
+          recursive: false
+          dest: ./${{ env.RELEASE_NAME }}-${{ needs.setup.outputs.version }}-ios.zip
+      - name: Upload
+        uses: softprops/action-gh-release@v1
+        with:
+          draft: false
+          prerelease: false
+          fail_on_unmatched_files: true
+          files: ./${{ env.RELEASE_NAME }}-${{ needs.setup.outputs.version }}-ios.zip

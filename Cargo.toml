@@ -9,15 +9,19 @@ members = [
     "launchers/native",
 ]
 
+exclude = [
+    "launchers/ios",
+]
+
+[[bin]]
+name="native-launcher"
+path="launchers/native/src/main.rs"
+
 # Enable high optimizations for dependencies (incl. Bevy), but not for our code:
 [profile.dev.package.my-game]
 opt-level = 0
 [profile.dev.package."*"]
 opt-level = 3
-
-[[bin]]
-name="native-launcher"
-path="launchers/native/src/main.rs"
 
 # Optimizations for WASM
 [profile.release]
