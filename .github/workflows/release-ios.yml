@@ -28,7 +28,7 @@ jobs:
         run: |
           cd ./launchers/ios
           cargo install cargo-bundle
-          cargo bundle --release --target --format ios x86_64-apple-ios
+          cargo bundle --release --format ios --target x86_64-apple-ios
       - name: Rename
         run: |
           cd ./launchers/ios
