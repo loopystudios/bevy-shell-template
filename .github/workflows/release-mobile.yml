@@ -31,8 +31,7 @@ jobs:
           cargo bundle --release --format ios --target x86_64-apple-ios
       - name: Rename
         run: |
-          cd ./launchers/ios
-          mv ./target/release/ios-launcher ../../${{ env.RELEASE_NAME }}
+          mv ./target/release/ios-launcher ./${{ env.RELEASE_NAME }}
       - name: Zip release
         uses: vimtor/action-zip@v1
         with:
