@@ -32,5 +32,5 @@ lto = true
 
 [dependencies]
 bevy = "0.8.1"
-image = "0.24.4"
+image = "0.24.5"
 winit = "0.26.1"
