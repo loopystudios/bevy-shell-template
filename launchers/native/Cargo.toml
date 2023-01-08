@@ -6,6 +6,6 @@ workspace = "../.."
 
 [dependencies]
 my-game = { package = "my-game", path = "../.." }
-bevy = "0.8"
+bevy = "0.9"
 image = "0.24.5"
 winit = "0.26.1"
