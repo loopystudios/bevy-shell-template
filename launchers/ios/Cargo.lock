@@ -1619,6 +1619,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "game"
+version = "0.1.0"
+dependencies = [
+ "bevy",
+ "image",
+ "winit",
+]
+
+[[package]]
 name = "getrandom"
 version = "0.2.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1955,8 +1964,8 @@ name = "ios-launcher"
 version = "0.1.0"
 dependencies = [
  "bevy",
+ "game",
  "image",
- "my-game",
  "winit",
 ]
 
@@ -2217,15 +2226,6 @@ dependencies = [
  "log",
  "wasi",
  "windows-sys 0.42.0",
-]
-
-[[package]]
-name = "my-game"
-version = "0.1.0"
-dependencies = [
- "bevy",
- "image",
- "winit",
 ]
 
 [[package]]

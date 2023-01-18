@@ -7,7 +7,9 @@ edition = "2021"
 members = [
     "launchers/wasm",
     "launchers/native",
-    "launchers/ios",
+]
+exclude = [
+    "launchers/ios" # Special handling required
 ]
 
 [profile.dev]

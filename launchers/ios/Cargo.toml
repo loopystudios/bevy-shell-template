@@ -2,6 +2,7 @@
 name = "ios-launcher"
 version = "0.1.0"
 edition = "2021"
+description = "a description is necessary for an iOS app"
 
 [package.metadata.bundle]
 name = "ios-launcher"
