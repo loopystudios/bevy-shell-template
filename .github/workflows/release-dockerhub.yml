@@ -19,7 +19,9 @@ jobs:
           version: "latest"
 
       - name: Build | Trunk
-        run: trunk build --release
+        run: |
+          cd launchers/wasm
+          trunk build --release
 
       - name: Post Build | Upload dist
         uses: actions/upload-artifact@v3
