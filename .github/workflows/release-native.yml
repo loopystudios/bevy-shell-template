@@ -18,7 +18,7 @@ jobs:
         include:
           - target: x86_64-unknown-linux-gnu
             os: ubuntu-latest
-            name: x86_64-unknown-linux-gnu.tar.gz
+            name: x86_64-unknown-linux-gnu.tar
           - target: x86_64-apple-darwin
             os: macos-latest
             name: x86_64-apple-darwin.tar.gz
@@ -64,13 +64,13 @@ jobs:
         if: matrix.os != 'windows-latest'
         run: |
           cd launchers/native
-          tar czvf ../../${{ matrix.name }} static/
+          tar cvf ../../${{ matrix.name }} static/
           cd -
           cd target/${{ matrix.target }}/release
           mv native-launcher ${{ env.RELEASE_NAME }}
-          tar -zvf ../../../${{ matrix.name }} ${{ env.RELEASE_NAME }}
+          tar -vf ../../../${{ matrix.name }} ${{ env.RELEASE_NAME }}
           cd -
-          tar -zrf ${{ matrix.name }} assets/
+          tar -rf ${{ matrix.name }} assets/
           mv ${{ matrix.name }} ${{ env.RELEASE_NAME }}-${{ matrix.name }}
 
       - name: Release | Upload
