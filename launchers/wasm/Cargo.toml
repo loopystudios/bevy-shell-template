@@ -5,7 +5,7 @@ edition = "2021"
 workspace = "../.."
 
 [dependencies]
-my-game = { package = "my-game", path = "../.." }
+game = { path = "../.." }
 bevy = "0.9.1"
 web-sys = { version="0.3.60", features=["Document", "Window"] }
 yew = "0.19.3"
