@@ -8,6 +8,13 @@ BUNDLE_ID="$(cat Cargo.toml | dasel -r toml '.package.metadata.bundle.identifier
 
 BUNDLE_CMD="cargo bundle --target $TARGET"
 
+echo "Copying assets"
+if [ ! -d ../../assets ]; then
+    echo "Error: work dir must be iOS launcher directory before running this script"
+    exit 1
+fi
+cp -r ../../assets/ assets/
+
 echo "Bundling app for iOS"
 which cargo-bundle || cargo install cargo-bundle
 $BUNDLE_CMD
