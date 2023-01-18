@@ -36,7 +36,7 @@ jobs:
         uses: actions/download-artifact@v3
 
       - name: Setup | Place dist
-        run: mv ./artifact/ ./launchers/wasm/dist/
+        run: mv ./artifact ./launchers/wasm/dist/
 
       - name: Deploy | Github Pages
         uses: peaceiris/actions-gh-pages@v3

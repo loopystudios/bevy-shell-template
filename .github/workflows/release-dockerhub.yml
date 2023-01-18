@@ -41,7 +41,7 @@ jobs:
       - name: Setup | Download dist
         uses: actions/download-artifact@v3
       - name: Setup | Place dist
-        run: mv ./artifact/ ./launchers/wasm/dist/
+        run: mv ./artifact ./launchers/wasm/dist/
 
       - name: Setup | QEMU
         uses: docker/setup-qemu-action@v2
