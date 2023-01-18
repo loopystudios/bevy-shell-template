@@ -97,7 +97,7 @@ jobs:
       - name: Post Setup | Upload dist
         uses: actions/upload-artifact@v3
         with:
-          path: ./dist/
+          path: ./launchers/wasm/dist/
 
   docker-wasm:
     needs: build-wasm
@@ -109,7 +109,7 @@ jobs:
       - name: Setup | Download dist
         uses: actions/download-artifact@v3
       - name: Setup | Place dist
-        run: mv ./artifact/ ./dist/
+        run: mv ./artifact/ ./launchers/wasm/dist/
 
       - name: Setup | Docker Buildx
         uses: docker/setup-buildx-action@v2

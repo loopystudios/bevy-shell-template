@@ -1,13 +1,10 @@
-name: release-native
-
+name: Release Native
 on:
   push:
-    tags:
-      - "v*.*.*"
+    tags: ["v*"]
 
 env:
-  RELEASE_NAME: my_game
-  PUBLIC_URL: /bevy-shell-template/
+  RELEASE_NAME: bevy_shell
 
 jobs:
   setup:

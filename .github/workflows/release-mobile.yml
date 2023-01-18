@@ -1,44 +1,41 @@
-name: release-ios
-
+name: Release iOS
 on:
   push:
-    tags:
-      - "v*.*.*"
+    tags: ["v*"]
 
 env:
-  RELEASE_NAME: my_game
+  RELEASE_NAME: bevy_shell
 
 jobs:
-  setup:
-    runs-on: ubuntu-latest
-    outputs:
-      version: ${{ steps.version-tag.outputs.VERSION }}
-    steps:
-      - name: Get tagged version
-        id: version-tag
-        run: echo "::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}"
-
-  release-ios:
-    needs: setup
+  release:
     runs-on: macos-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      - name: Build
+
+      - name: Setup | Get version tag
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+
+      - name: Setup | Install dependencies
+        run: cargo install cargo-bundle
+
+      - name: Build | iOS
         run: |
           cd ./launchers/ios
-          cargo install cargo-bundle
           cargo bundle --release --format ios --target x86_64-apple-ios
-      - name: Rename
+
+      - name: Stage | Rename
         run: |
           mv ./launchers/ios/target/release/ios-launcher ./${{ env.RELEASE_NAME }}
-      - name: Zip release
+
+      - name: Stage | Zip release
         uses: vimtor/action-zip@v1
         with:
           files: ./${{ env.RELEASE_NAME }}
           recursive: false
           dest: ./${{ env.RELEASE_NAME }}-${{ needs.setup.outputs.version }}-ios.zip
-      - name: Upload
+
+      - name: Release | Upload
         uses: softprops/action-gh-release@v1
         with:
           draft: false
