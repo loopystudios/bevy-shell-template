@@ -4,98 +4,70 @@ on:
     tags: ["v*"]
 
 env:
+  PACKAGE_NAME: game
   RELEASE_NAME: bevy_shell
 
 jobs:
-  setup:
-    runs-on: ubuntu-latest
-    outputs:
-      version: ${{ steps.version-tag.outputs.VERSION }}
+  release:
+    strategy:
+      fail-fast: false
+      matrix:
+        target:
+          - x86_64-unknown-linux-gnu
+          - x86_64-apple-darwin
+          - x86_64-pc-windows-msvc
+        include:
+          - target: x86_64-unknown-linux-gnu
+            os: ubuntu-latest
+            name: ${{ env.RELEASE_NAME }}-x86_64-unknown-linux-gnu.tar.gz
+          - target: x86_64-apple-darwin
+            os: macos-latest
+            name: ${{ env.RELEASE_NAME }}-x86_64-apple-darwin.tar.gz
+          - target: x86_64-pc-windows-msvc
+            os: windows-latest
+            name: ${{ env.RELEASE_NAME }}-x86_64-pc-windows-msvc.zip
+    runs-on: ${{ matrix.os }}
     steps:
-      - name: Get tagged version
-        id: version-tag
-        run: echo "::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}"
-
-  release-windows:
-    needs: setup
-    runs-on: windows-latest
-    steps:
-      - name: Checkout code
+      - name: Setup | Checkout
         uses: actions/checkout@v3
+
+      - name: Setup | Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: nightly
+          override: true
+          profile: minimal
+          target: ${{ matrix.target }}
+
+      - name: Setup | Ubuntu dependencies
+        if: matrix.os == 'ubuntu-latest'
+        run: sudo apt install libasound2-dev libudev-dev pkg-config
+
       - name: Build
         run: |
-          cd ./launchers/native
-          cargo build --release
-      - name: Rename
-        run: |
-          mv ./target/release/native-launcher.exe ./${{ env.RELEASE_NAME }}.exe
-      - name: Zip release
-        uses: vimtor/action-zip@v1
-        with:
-          files: assets/ ./${{ env.RELEASE_NAME }}.exe
-          recursive: false
-          dest: ./${{ env.RELEASE_NAME }}-${{ needs.setup.outputs.version }}-windows.zip
-      - name: Upload
-        uses: softprops/action-gh-release@v1
-        with:
-          draft: false
-          prerelease: false
-          fail_on_unmatched_files: true
-          files: ./${{ env.RELEASE_NAME }}-${{ needs.setup.outputs.version }}-windows.zip
+          cd launchers/native
+          cargo build --release --target ${{ matrix.target }}
 
-  release-mac:
-    needs: setup
-    runs-on: macos-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-      - name: Build
+      - name: Post Build | Prepare artifacts [Windows]
+        if: matrix.os == 'windows-latest'
         run: |
-          cd ./launchers/native
-          cargo build --release
-      - name: Rename
-        run: |
-          mv ./target/release/native-launcher ./${{ env.RELEASE_NAME }}
-      - name: Zip release
-        uses: vimtor/action-zip@v1
-        with:
-          files: assets/ ./${{ env.RELEASE_NAME }}
-          recursive: false
-          dest: ./${{ env.RELEASE_NAME }}-${{ needs.setup.outputs.version }}-darwin.zip
-      - name: Upload
-        uses: softprops/action-gh-release@v1
-        with:
-          draft: false
-          prerelease: false
-          fail_on_unmatched_files: true
-          files: ./${{ env.RELEASE_NAME }}-${{ needs.setup.outputs.version }}-darwin.zip
+          cd target/${{ matrix.target }}/release
+          7z a ../../../${{ matrix.name }} ${{ env.PACKAGE_NAME }}.exe
+          cd -
+          7z a ${{ matrix.name }} assets/
 
-  release-ubuntu:
-    needs: setup
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-      - name: Get dependencies
+      - name: Post Build | Prepare artifacts [-nix]
+        if: matrix.os != 'windows-latest'
         run: |
-          sudo apt install libasound2-dev libudev-dev pkg-config
-      - name: Build
-        run: |
-          cd ./launchers/native
-          cargo build --release
-      - name: Rename
-        run: |
-          mv ./target/release/native-launcher ./${{ env.RELEASE_NAME }}
-      - name: Zip release
-        uses: vimtor/action-zip@v1
-        with:
-          files: assets/ ./${{ env.RELEASE_NAME }}
-          recursive: false
-          dest: ./${{ env.RELEASE_NAME }}-${{ needs.setup.outputs.version }}-ubuntu.zip
-      - name: Upload
+          cd target/${{ matrix.target }}/release
+          mv ${{ env.PACKAGE_NAME }} ${{ env.RELEASE_NAME }}
+          tar czvf ../../../${{ matrix.name }} ${{ env.RELEASE_NAME }}
+          cd -
+          tar -zrf ${{ matrix.name }} assets/
+
+      - name: Release | Upload
         uses: softprops/action-gh-release@v1
         with:
-          draft: false
-          prerelease: false
-          fail_on_unmatched_files: true
-          files: ./${{ env.RELEASE_NAME }}-${{ needs.setup.outputs.version }}-ubuntu.zip
+          files: ${{ env.RELEASE_NAME }}-*/${{ env.RELEASE_NAME }}-*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
