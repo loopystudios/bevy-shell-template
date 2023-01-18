@@ -9,4 +9,4 @@ my-game = { package = "my-game", path = "../.." }
 bevy = "0.9.1"
 web-sys = { version="0.3.60", features=["Document", "Window"] }
 yew = "0.19.3"
-stylist = { version= "0.10.1", features=["yew_integration"] }
+stylist = { version= "0.11.0", features=["yew_integration"] }
