@@ -8,7 +8,7 @@ description = "a description is necessary for an iOS app"
 name = "ios-launcher"
 identifier = "com.example.ios-launcher"
 icon = ["static/icon.png"]
-resources = ["assets/"]
+resources = ["assets/", "static/"]
 
 [dependencies]
 game = { path = "../.." }
