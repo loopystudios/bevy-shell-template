@@ -117,8 +117,7 @@ jobs:
       - name: Setup | Build Docker Image
         uses: docker/build-push-action@v3
         with:
-          context: .
-          file: ./CI.Dockerfile
+          context: ./launchers/wasm
           push: false
 
   test:
