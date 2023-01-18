@@ -75,6 +75,6 @@ jobs:
       - name: Release | Upload
         uses: softprops/action-gh-release@v1
         with:
-          files: ${{ env.RELEASE_NAME }}-*/${{ env.RELEASE_NAME }}-*
+          files: ${{ env.RELEASE_NAME }}-${{ matrix.name }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
