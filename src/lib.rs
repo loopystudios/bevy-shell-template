@@ -9,21 +9,23 @@ pub fn app(fullscreen: bool) -> App {
         WindowMode::Windowed
     };
     let mut app = App::new();
-    app.insert_resource(WindowDescriptor {
-        title: LAUNCHER_TITLE.to_string(),
-        canvas: Some("#bevy".to_string()),
-        fit_canvas_to_parent: true,
-        mode,
-        ..Default::default()
-    })
-    .add_plugins(DefaultPlugins)
+    app.add_plugins(DefaultPlugins.set(WindowPlugin {
+        window: WindowDescriptor {
+            title: LAUNCHER_TITLE.to_string(),
+            canvas: Some("#bevy".to_string()),
+            fit_canvas_to_parent: true,
+            mode,
+            ..default()
+        },
+        ..default()
+    }))
     .add_startup_system(load_icon);
     app
 }
 
 fn load_icon(mut commands: Commands, asset_server: Res<AssetServer>) {
-    commands.spawn_bundle(Camera2dBundle::default());
-    commands.spawn_bundle(SpriteBundle {
+    commands.spawn(Camera2dBundle::default());
+    commands.spawn(SpriteBundle {
         texture: asset_server.load("bevy.png"),
         ..default()
     });
