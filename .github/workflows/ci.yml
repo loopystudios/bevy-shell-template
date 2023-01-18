@@ -32,7 +32,6 @@ jobs:
         run: cargo fmt -- --check
 
   check:
-    needs: check # Ensure check is run first.
     strategy:
       fail-fast: false
       matrix:
