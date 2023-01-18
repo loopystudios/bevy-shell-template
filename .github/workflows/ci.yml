@@ -94,7 +94,8 @@ jobs:
           version: "latest"
 
       - name: Build | Trunk
-        run: trunk build
+        run: |
+          cd launchers/wasm
 
       - name: Post Setup | Upload dist
         uses: actions/upload-artifact@v3
