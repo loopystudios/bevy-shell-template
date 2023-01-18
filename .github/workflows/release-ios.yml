@@ -26,14 +26,14 @@ jobs:
 
       - name: Stage | Rename
         run: |
-          mv ./launchers/ios/target/release/ios-launcher ./${{ env.RELEASE_NAME }}
+          mv ./launchers/ios/target/x86_64-apple-ios/release/ios-launcher ./${{ env.RELEASE_NAME }}
 
       - name: Stage | Zip release
         uses: vimtor/action-zip@v1
         with:
           files: ./${{ env.RELEASE_NAME }}
           recursive: false
-          dest: ./${{ env.RELEASE_NAME }}-${{ needs.setup.outputs.version }}-ios.zip
+          dest: ./${{ env.RELEASE_NAME }}-${{ env.RELEASE_VERSION }}-ios.zip
 
       - name: Release | Upload
         uses: softprops/action-gh-release@v1
@@ -41,4 +41,4 @@ jobs:
           draft: false
           prerelease: false
           fail_on_unmatched_files: true
-          files: ./${{ env.RELEASE_NAME }}-${{ needs.setup.outputs.version }}-ios.zip
+          files: ./${{ env.RELEASE_NAME }}-${{ env.RELEASE_VERSION }}-ios.zip
