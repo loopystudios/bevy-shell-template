@@ -1,5 +1,5 @@
 [package]
-name = "my-game"
+name = "game"
 version = "0.1.0"
 edition = "2021"
 
@@ -7,23 +7,12 @@ edition = "2021"
 members = [
     "launchers/wasm",
     "launchers/native",
-]
-
-exclude = [
     "launchers/ios",
 ]
 
-[[bin]]
-name="native-launcher"
-path="launchers/native/src/main.rs"
+[profile.dev]
+opt-level = 1
 
-# Enable high optimizations for dependencies (incl. Bevy), but not for our code:
-[profile.dev.package.my-game]
-opt-level = 0
-[profile.dev.package."*"]
-opt-level = 3
-
-# Optimizations for WASM
 [profile.release]
 panic = 'abort'
 codegen-units = 1

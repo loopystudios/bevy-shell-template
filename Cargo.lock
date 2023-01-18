@@ -1636,6 +1636,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "game"
+version = "0.1.0"
+dependencies = [
+ "bevy",
+ "image",
+ "winit",
+]
+
+[[package]]
 name = "getrandom"
 version = "0.2.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2074,6 +2083,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "ios-launcher"
+version = "0.1.0"
+dependencies = [
+ "bevy",
+ "game",
+ "image",
+ "winit",
+]
+
+[[package]]
 name = "itertools"
 version = "0.10.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2351,15 +2370,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "my-game"
-version = "0.1.0"
-dependencies = [
- "bevy",
- "image",
- "winit",
-]
-
-[[package]]
 name = "naga"
 version = "0.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2395,8 +2405,8 @@ name = "native-launcher"
 version = "0.1.0"
 dependencies = [
  "bevy",
+ "game",
  "image",
- "my-game",
  "winit",
 ]
 
@@ -3690,7 +3700,7 @@ name = "wasm-launcher"
 version = "0.1.0"
 dependencies = [
  "bevy",
- "my-game",
+ "game",
  "stylist",
  "web-sys",
  "yew",

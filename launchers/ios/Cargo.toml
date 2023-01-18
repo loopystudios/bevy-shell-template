@@ -2,7 +2,6 @@
 name = "ios-launcher"
 version = "0.1.0"
 edition = "2021"
-description = "Bevy cross platform template"
 
 [package.metadata.bundle]
 name = "ios-launcher"
@@ -10,9 +9,8 @@ identifier = "com.example.ios-launcher"
 icon = ["assets/bevy.png"]
 resources = ["assets"]
 
-
 [dependencies]
-my-game = { package = "my-game", path = "../.." }
+bevy-shell = { package = "game", path = "../.." }
 bevy = "0.9.1"
 image = "0.24.5"
 winit = "0.27.5"
