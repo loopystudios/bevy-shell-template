@@ -8,6 +8,10 @@ jobs:
       - name: Setup | Checkout
         uses: actions/checkout@v3
 
+      - name: Setup | Ubuntu dependencies
+        if: matrix.os == 'ubuntu-latest'
+        run: sudo apt install libasound2-dev libudev-dev pkg-config
+
       - name: Setup | Toolchain (clippy)
         uses: actions-rs/toolchain@v1
         with:
