@@ -4,7 +4,6 @@ on:
     tags: ["v*"]
 
 env:
-  PACKAGE_NAME: game
   RELEASE_NAME: bevy_shell
 
 jobs:
@@ -52,7 +51,8 @@ jobs:
         if: matrix.os == 'windows-latest'
         run: |
           cd target/${{ matrix.target }}/release
-          7z a ../../../${{ matrix.name }} ${{ env.PACKAGE_NAME }}.exe
+          mv native-launcher.exe ${{ env.RELEASE_NAME }}.exe
+          7z a ../../../${{ matrix.name }} ${{ env.RELEASE_NAME }}.exe
           cd -
           7z a ${{ matrix.name }} assets/
           mv ${{ matrix.name }} ${{ env.RELEASE_NAME }}-${{ matrix.name }}
@@ -61,7 +61,7 @@ jobs:
         if: matrix.os != 'windows-latest'
         run: |
           cd target/${{ matrix.target }}/release
-          mv ${{ env.PACKAGE_NAME }} ${{ env.RELEASE_NAME }}
+          mv native-launcher ${{ env.RELEASE_NAME }}
           tar czvf ../../../${{ matrix.name }} ${{ env.RELEASE_NAME }}
           cd -
           tar -zrf ${{ matrix.name }} assets/
