@@ -50,6 +50,9 @@ jobs:
       - name: Post Build | Prepare artifacts [Windows]
         if: matrix.os == 'windows-latest'
         run: |
+          cd launchers/native
+          7z a ../../${{ matrix.name }} static/
+          cd -
           cd target/${{ matrix.target }}/release
           mv native-launcher.exe ${{ env.RELEASE_NAME }}.exe
           7z a ../../../${{ matrix.name }} ${{ env.RELEASE_NAME }}.exe
@@ -60,9 +63,12 @@ jobs:
       - name: Post Build | Prepare artifacts [-nix]
         if: matrix.os != 'windows-latest'
         run: |
+          cd launchers/native
+          tar czvf ../../${{ matrix.name }} static/
+          cd -
           cd target/${{ matrix.target }}/release
           mv native-launcher ${{ env.RELEASE_NAME }}
-          tar czvf ../../../${{ matrix.name }} ${{ env.RELEASE_NAME }}
+          tar -zvf ../../../${{ matrix.name }} ${{ env.RELEASE_NAME }}
           cd -
           tar -zrf ${{ matrix.name }} assets/
           mv ${{ matrix.name }} ${{ env.RELEASE_NAME }}-${{ matrix.name }}

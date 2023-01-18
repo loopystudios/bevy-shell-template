@@ -1,0 +1,18 @@
+# Learn more: https://trunkrs.dev/configuration/#trunk-toml
+
+[build]
+# The index HTML file to drive the bundling process.
+target = "index.html"
+
+[watch]
+watch = [
+    "../../src",    # Game source
+    "src",          # WASM launcher source
+    "static/",
+    "index.html"
+]
+
+[[hooks]]
+stage = "pre_build"
+command = "cp"
+command_arguments = ["-r", "../../assets", "."]
