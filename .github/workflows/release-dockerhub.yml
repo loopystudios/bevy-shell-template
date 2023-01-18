@@ -22,7 +22,7 @@ jobs:
       - name: Build | Trunk
         run: trunk build --release
 
-      - name: Post Setup | Upload dist
+      - name: Post Build | Upload dist
         uses: actions/upload-artifact@v3
         with:
           path: ./launchers/wasm/dist/
