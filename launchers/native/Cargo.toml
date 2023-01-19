@@ -5,7 +5,7 @@ edition = "2021"
 workspace = "../.."
 
 [dependencies]
-my-game = { package = "my-game", path = "../.." }
+game = { path = "../.." }
 bevy = "0.9.1"
 image = "0.24.5"
 winit = "0.27.5"

@@ -1,0 +1,41 @@
+name: Release iOS
+on:
+  push:
+    tags: ["v*"]
+
+env:
+  RELEASE_NAME: bevy_shell
+
+jobs:
+  release:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup | Install dependencies
+        run: cargo install cargo-bundle
+
+      - name: Build | iOS
+        run: |
+          cd ./launchers/ios
+          cargo bundle --release --format ios --target x86_64-apple-ios
+
+      - name: Stage | Rename
+        run: |
+          mv ./launchers/ios/target/x86_64-apple-ios/release/ios-launcher ./${{ env.RELEASE_NAME }}
+
+      - name: Stage | Zip release
+        uses: vimtor/action-zip@v1
+        with:
+          files: ./${{ env.RELEASE_NAME }}
+          recursive: false
+          dest: ./${{ env.RELEASE_NAME }}-x86_64-apple-ios.zip
+
+      - name: Release | Upload
+        uses: softprops/action-gh-release@v1
+        with:
+          draft: false
+          prerelease: false
+          fail_on_unmatched_files: true
+          files: ./${{ env.RELEASE_NAME }}-x86_64-apple-ios.zip

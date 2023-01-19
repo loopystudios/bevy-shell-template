@@ -1,38 +1,45 @@
-name: release-gh-pages
-
+name: Release WASM (GitHub Pages)
 on:
   push:
-    tags:
-      - "v*.*.*"
+    tags: ["v*"]
 
 env:
   PUBLIC_URL: /bevy-shell-template/
 
 jobs:
-  setup:
-    runs-on: ubuntu-latest
-    outputs:
-      version: ${{ steps.version-tag.outputs.VERSION }}
-    steps:
-      - name: Get tagged version
-        id: version-tag
-        run: echo "::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}"
-
-  release-wasm:
-    needs: setup
+  build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Setup | Checkout
         uses: actions/checkout@v3
-      - name: Install Trunk
+
+      - name: Setup | Trunk
         uses: jetli/trunk-action@v0.4.0
         with:
           version: "latest"
-      - name: Trunk Build
+
+      - name: Build | Trunk
         run: |
+          cd launchers/wasm
           trunk build --release --public-url ${{ env.PUBLIC_URL }}
-      - name: Deploy, Github Pages
+
+      - name: Post Build | Upload dist
+        uses: actions/upload-artifact@v3
+        with:
+          path: ./launchers/wasm/dist/
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup | Download dist
+        uses: actions/download-artifact@v3
+
+      - name: Setup | Place dist
+        run: mv ./artifact ./dist
+
+      - name: Deploy | Github Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./launchers/wasm/dist/
+          publish_dir: ./dist/
