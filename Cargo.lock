@@ -1561,7 +1561,7 @@ version = "0.1.0"
 dependencies = [
  "bevy",
  "image",
- "winit 0.28.1",
+ "winit 0.28.5",
 ]
 
 [[package]]
@@ -2317,7 +2317,7 @@ dependencies = [
  "bevy",
  "game",
  "image",
- "winit 0.28.1",
+ "winit 0.28.5",
 ]
 
 [[package]]
@@ -4053,9 +4053,9 @@ dependencies = [
 
 [[package]]
 name = "winit"
-version = "0.28.1"
+version = "0.28.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0c4755d4ba0e3d30fc7beef2095e246b1e6a6fad0717608bcb87a2df4b003bcf"
+checksum = "94c9651471cd576737671fbf7081edfea43de3e06846dd9bd4e49ea803c9f55f"
 dependencies = [
  "android-activity",
  "bitflags",
